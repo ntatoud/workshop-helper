@@ -56,8 +56,4 @@ const router = {
     }),
 }
 
-export default os
-  .$context<{ headers: Headers }>()
-  .prefix('/steps')
-  .tag('steps')
-  .router(router)
+export default os.prefix('/steps').tag('steps').router(router)

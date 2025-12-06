@@ -10,3 +10,26 @@ export const zSolution = () =>
     createdAt: z.date(),
     updatedAt: z.date(),
   })
+
+export type SolutionCreateFormFields = z.input<
+  ReturnType<typeof zSolutionCreateFormFields>
+>
+export const zSolutionCreateFormFields = () =>
+  zSolution().pick({
+    substepId: true,
+    content: true,
+    explanation: true,
+  })
+
+export type SolutionUpdateFormFields = z.input<
+  ReturnType<typeof zSolutionUpdateFormFields>
+>
+export const zSolutionUpdateFormFields = () =>
+  zSolution()
+    .pick({
+      id: true,
+      explanation: true,
+    })
+    .extend({
+      content: zSolution().shape.content.optional(),
+    })

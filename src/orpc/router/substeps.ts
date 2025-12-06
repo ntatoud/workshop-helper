@@ -56,8 +56,4 @@ const router = {
     }),
 }
 
-export default os
-  .$context<{ headers: Headers }>()
-  .prefix('/substeps')
-  .tag('substeps')
-  .router(router)
+export default os.prefix('/substeps').tag('substeps').router(router)
