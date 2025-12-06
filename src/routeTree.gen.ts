@@ -12,11 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ManagerIndexRouteImport } from './routes/manager/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
-import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as ApiIndexSplatRouteImport } from './routes/api/index.$'
 import { Route as ManagerWorkshopsIndexRouteImport } from './routes/manager/workshops/index'
 import { Route as ManagerSessionsIndexRouteImport } from './routes/manager/sessions/index'
 import { Route as AppSessionIdParticipantIdRouteImport } from './routes/app/$sessionId.$participantId'
-import { Route as ApiRpcSplatRouteImport } from './routes/api.rpc.$'
+import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ManagerWorkshopsWorkshopIdIndexRouteImport } from './routes/manager/workshops/$workshopId/index'
 import { Route as ManagerSessionsSessionIdIndexRouteImport } from './routes/manager/sessions/$sessionId/index'
 import { Route as ManagerWorkshopsWorkshopIdStepsStepIdIndexRouteImport } from './routes/manager/workshops/$workshopId/steps/$stepId/index'
@@ -37,9 +37,9 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/app/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSplatRoute = ApiSplatRouteImport.update({
-  id: '/api/$',
-  path: '/api/$',
+const ApiIndexSplatRoute = ApiIndexSplatRouteImport.update({
+  id: '/api/index/$',
+  path: '/api/index/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManagerWorkshopsIndexRoute = ManagerWorkshopsIndexRouteImport.update({
@@ -90,13 +90,13 @@ const ManagerWorkshopsWorkshopIdStepsStepIdSubstepsSubstepIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/$': typeof ApiSplatRoute
   '/app': typeof AppIndexRoute
   '/manager': typeof ManagerIndexRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/$sessionId/$participantId': typeof AppSessionIdParticipantIdRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
   '/manager/workshops': typeof ManagerWorkshopsIndexRoute
+  '/api/index/$': typeof ApiIndexSplatRoute
   '/manager/sessions/$sessionId': typeof ManagerSessionsSessionIdIndexRoute
   '/manager/workshops/$workshopId': typeof ManagerWorkshopsWorkshopIdIndexRoute
   '/manager/workshops/$workshopId/steps/$stepId': typeof ManagerWorkshopsWorkshopIdStepsStepIdIndexRoute
@@ -104,13 +104,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/$': typeof ApiSplatRoute
   '/app': typeof AppIndexRoute
   '/manager': typeof ManagerIndexRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/$sessionId/$participantId': typeof AppSessionIdParticipantIdRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
   '/manager/workshops': typeof ManagerWorkshopsIndexRoute
+  '/api/index/$': typeof ApiIndexSplatRoute
   '/manager/sessions/$sessionId': typeof ManagerSessionsSessionIdIndexRoute
   '/manager/workshops/$workshopId': typeof ManagerWorkshopsWorkshopIdIndexRoute
   '/manager/workshops/$workshopId/steps/$stepId': typeof ManagerWorkshopsWorkshopIdStepsStepIdIndexRoute
@@ -119,13 +119,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/$': typeof ApiSplatRoute
   '/app/': typeof AppIndexRoute
   '/manager/': typeof ManagerIndexRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
   '/app/$sessionId/$participantId': typeof AppSessionIdParticipantIdRoute
   '/manager/sessions/': typeof ManagerSessionsIndexRoute
   '/manager/workshops/': typeof ManagerWorkshopsIndexRoute
+  '/api/index/$': typeof ApiIndexSplatRoute
   '/manager/sessions/$sessionId/': typeof ManagerSessionsSessionIdIndexRoute
   '/manager/workshops/$workshopId/': typeof ManagerWorkshopsWorkshopIdIndexRoute
   '/manager/workshops/$workshopId/steps/$stepId/': typeof ManagerWorkshopsWorkshopIdStepsStepIdIndexRoute
@@ -135,13 +135,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/api/$'
     | '/app'
     | '/manager'
     | '/api/rpc/$'
     | '/app/$sessionId/$participantId'
     | '/manager/sessions'
     | '/manager/workshops'
+    | '/api/index/$'
     | '/manager/sessions/$sessionId'
     | '/manager/workshops/$workshopId'
     | '/manager/workshops/$workshopId/steps/$stepId'
@@ -149,13 +149,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/api/$'
     | '/app'
     | '/manager'
     | '/api/rpc/$'
     | '/app/$sessionId/$participantId'
     | '/manager/sessions'
     | '/manager/workshops'
+    | '/api/index/$'
     | '/manager/sessions/$sessionId'
     | '/manager/workshops/$workshopId'
     | '/manager/workshops/$workshopId/steps/$stepId'
@@ -163,13 +163,13 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/api/$'
     | '/app/'
     | '/manager/'
     | '/api/rpc/$'
     | '/app/$sessionId/$participantId'
     | '/manager/sessions/'
     | '/manager/workshops/'
+    | '/api/index/$'
     | '/manager/sessions/$sessionId/'
     | '/manager/workshops/$workshopId/'
     | '/manager/workshops/$workshopId/steps/$stepId/'
@@ -178,13 +178,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiSplatRoute: typeof ApiSplatRoute
   AppIndexRoute: typeof AppIndexRoute
   ManagerIndexRoute: typeof ManagerIndexRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
   AppSessionIdParticipantIdRoute: typeof AppSessionIdParticipantIdRoute
   ManagerSessionsIndexRoute: typeof ManagerSessionsIndexRoute
   ManagerWorkshopsIndexRoute: typeof ManagerWorkshopsIndexRoute
+  ApiIndexSplatRoute: typeof ApiIndexSplatRoute
   ManagerSessionsSessionIdIndexRoute: typeof ManagerSessionsSessionIdIndexRoute
   ManagerWorkshopsWorkshopIdIndexRoute: typeof ManagerWorkshopsWorkshopIdIndexRoute
   ManagerWorkshopsWorkshopIdStepsStepIdIndexRoute: typeof ManagerWorkshopsWorkshopIdStepsStepIdIndexRoute
@@ -214,11 +214,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/$': {
-      id: '/api/$'
-      path: '/api/$'
-      fullPath: '/api/$'
-      preLoaderRoute: typeof ApiSplatRouteImport
+    '/api/index/$': {
+      id: '/api/index/$'
+      path: '/api/index/$'
+      fullPath: '/api/index/$'
+      preLoaderRoute: typeof ApiIndexSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manager/workshops/': {
@@ -282,13 +282,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiSplatRoute: ApiSplatRoute,
   AppIndexRoute: AppIndexRoute,
   ManagerIndexRoute: ManagerIndexRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
   AppSessionIdParticipantIdRoute: AppSessionIdParticipantIdRoute,
   ManagerSessionsIndexRoute: ManagerSessionsIndexRoute,
   ManagerWorkshopsIndexRoute: ManagerWorkshopsIndexRoute,
+  ApiIndexSplatRoute: ApiIndexSplatRoute,
   ManagerSessionsSessionIdIndexRoute: ManagerSessionsSessionIdIndexRoute,
   ManagerWorkshopsWorkshopIdIndexRoute: ManagerWorkshopsWorkshopIdIndexRoute,
   ManagerWorkshopsWorkshopIdStepsStepIdIndexRoute:
