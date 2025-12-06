@@ -1,37 +1,35 @@
-// src/orpc/router/workshops.ts
-import { os } from '@orpc/server'
+import { ORPCError, os } from '@orpc/server'
 import { z } from 'zod'
 import { desc, eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { workshops } from '@/db/schema'
+import {
+  zWorkshop,
+  zWorkshopCreateFormFields,
+  zWorkshopUpdateFormFields,
+} from '@/features/workshop/schema'
 
-const router = os
-  .$context<{ headers: Headers }>()
-  .prefix('/workshops')
-  .router({
-    // Create a new workshop
-    create: os
-      .input(
-        z.object({
-          title: z.string().min(1),
-          description: z.string().optional(),
-        }),
-      )
-      .handler(async ({ input }) => {
-        const [workshop] = await db
-          .insert(workshops)
-          .values({
-            title: input.title,
-            description: input.description,
-          })
-          .returning()
+const router = {
+  create: os
+    .input(zWorkshopCreateFormFields())
+    .output(zWorkshop())
+    .handler(async ({ input }) => {
+      const [workshop] = await db
+        .insert(workshops)
+        .values({
+          title: input.title,
+          description: input.description,
+        })
+        .returning()
 
-        return workshop
-      }),
+      return workshop
+    }),
 
-    // List all workshops
-    list: os.handler(async () => {
-      const test = await db.query.workshops.findMany({
+  list: os
+    .input(z.void())
+    .output(z.array(zWorkshop()))
+    .handler(async () => {
+      return await db.query.workshops.findMany({
         orderBy: desc(workshops.createdAt),
         with: {
           steps: {
@@ -44,12 +42,12 @@ const router = os
           },
         },
       })
-
-      return test
     }),
 
-    // Get a single workshop with all details
-    get: os.input(z.object({ id: z.number() })).handler(async ({ input }) => {
+  get: os
+    .input(zWorkshop().pick({ id: true }))
+    .output(zWorkshop())
+    .handler(async ({ input }) => {
       const workshop = await db.query.workshops.findFirst({
         where: eq(workshops.id, input.id),
         with: {
@@ -71,42 +69,36 @@ const router = os
       })
 
       if (!workshop) {
-        throw new Error('Workshop not found')
+        throw new ORPCError('NOT_FOUND', { message: 'Workshop not found' })
       }
 
       return workshop
     }),
 
-    // Update workshop
-    update: os
-      .input(
-        z.object({
-          id: z.number(),
-          title: z.string().min(1).optional(),
-          description: z.string().optional(),
-        }),
-      )
-      .handler(async ({ input }) => {
-        const [workshop] = await db
-          .update(workshops)
-          .set({
-            title: input.title,
-            description: input.description,
-            updatedAt: new Date(),
-          })
-          .where(eq(workshops.id, input.id))
-          .returning()
+  update: os
+    .input(zWorkshopUpdateFormFields())
+    .output(zWorkshop())
+    .handler(async ({ input }) => {
+      const [workshop] = await db
+        .update(workshops)
+        .set({
+          title: input.title,
+          description: input.description,
+          updatedAt: new Date(),
+        })
+        .where(eq(workshops.id, input.id))
+        .returning()
 
-        return workshop
-      }),
+      return workshop
+    }),
 
-    // Delete workshop
-    delete: os
-      .input(z.object({ id: z.number() }))
-      .handler(async ({ input }) => {
-        await db.delete(workshops).where(eq(workshops.id, input.id))
-        return { success: true }
-      }),
-  })
+  delete: os
+    .input(zWorkshop().pick({ id: true }))
+    .output(z.object({ success: z.boolean }))
+    .handler(async ({ input }) => {
+      await db.delete(workshops).where(eq(workshops.id, input.id))
+      return { success: true }
+    }),
+}
 
-export default router
+export default os.prefix('/workshops').tag('workshops').router(router)
