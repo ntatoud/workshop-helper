@@ -288,3 +288,5 @@ export const solutionAccessRelations = relations(solutionAccess, ({ one }) => ({
     references: [solutions.id],
   }),
 }))
+
+export * from './auth'
