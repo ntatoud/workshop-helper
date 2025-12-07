@@ -136,7 +136,7 @@ function SessionsPage() {
               <div>
                 <h3 className="text-xl font-semibold">{session.name}</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  {session.workshop.title}
+                  {session.workshop?.title}
                 </p>
               </div>
               {session.isActive && (
@@ -154,7 +154,7 @@ function SessionsPage() {
             </div>
 
             <div className="text-sm text-gray-600 mb-4">
-              <p>{session.participants.length || 0} participants</p>
+              <p>{session.participants?.length || 0} participants</p>
             </div>
 
             <div className="flex gap-2">

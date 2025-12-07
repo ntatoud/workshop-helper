@@ -48,11 +48,11 @@ function StepDetailPage() {
     }),
   )
 
-  const step = workshop?.steps.find((s) => s.id === parseInt(stepId))
+  const step = workshop?.steps?.find((s) => s.id === parseInt(stepId))
 
   const handleCreateSubstep = () => {
     if (!step) return
-    const nextOrder = (step.substeps.length || 0) + 1
+    const nextOrder = (step.substeps?.length || 0) + 1
     createSubstep.mutate({
       stepId: step.id,
       title: substepTitle,
@@ -174,7 +174,7 @@ function StepDetailPage() {
 
       <div className="space-y-6">
         <h2 className="text-2xl font-bold">Substeps</h2>
-        {step.substeps.map((substep, index) => (
+        {step.substeps?.map((substep, index) => (
           <div key={substep.id} className="border rounded-lg p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -203,14 +203,14 @@ function StepDetailPage() {
               </div>
             )}
             <div className="flex gap-4 text-sm text-gray-500">
-              <span>{substep.hints.length || 0} hints</span>
-              <span>{substep.solutions.length || 0} solutions</span>
+              <span>{substep.hints?.length || 0} hints</span>
+              <span>{substep.solutions?.length || 0} solutions</span>
             </div>
           </div>
         ))}
       </div>
 
-      {!step.substeps.length && (
+      {!step.substeps?.length && (
         <div className="text-center py-12 text-gray-500">
           No substeps yet. Add your first substep to get started!
         </div>
