@@ -1,22 +1,26 @@
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
+import { getUiState } from '@bearstudio/ui-state'
 import { orpc } from '@/orpc/client'
+import { Skeleton } from '@/components/ui/skeleton'
+import { SessionEmptyAccess } from '@/features/session/session-empty-access'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
+
+const REFETCH_ACCESSES_INTERVAL_SECONDS = 5
+const REFETCH_ACCESSES_INTERVAL_MS = REFETCH_ACCESSES_INTERVAL_SECONDS * 1000
 
 export function PageSession({
   params: { participantId },
 }: {
   params: { participantId: string }
 }) {
-  const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set())
-  const [expandedSubsteps, setExpandedSubsteps] = useState<Set<string>>(
-    new Set(),
-  )
   const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set())
   const [revealedSolutions, setRevealedSolutions] = useState<Set<string>>(
     new Set(),
   )
 
-  const { data: participant } = useQuery(
+  const participantQuery = useQuery(
     orpc.participants.get.queryOptions({
       input: {
         id: participantId,
@@ -24,35 +28,16 @@ export function PageSession({
     }),
   )
 
-  const { data: workshopContent } = useQuery(
+  const workshopContentQuery = useQuery(
     orpc.access.getWorkshopWithAccess.queryOptions({
       input: {
-        participantId: Number.parseInt(participantId),
-        workshopId: participant?.session.workshop?.id,
-      } as any,
-      enabled: !!participant?.session.workshop?.id,
+        participantId: participantId,
+        workshopId: participantQuery.data?.session.workshop?.id ?? '',
+      },
+      enabled: !!participantQuery.data?.session.workshop?.id,
+      refetchInterval: REFETCH_ACCESSES_INTERVAL_MS,
     }),
   )
-
-  const toggleStep = (stepId: string) => {
-    const newExpanded = new Set(expandedSteps)
-    if (newExpanded.has(stepId)) {
-      newExpanded.delete(stepId)
-    } else {
-      newExpanded.add(stepId)
-    }
-    setExpandedSteps(newExpanded)
-  }
-
-  const toggleSubstep = (substepId: string) => {
-    const newExpanded = new Set(expandedSubsteps)
-    if (newExpanded.has(substepId)) {
-      newExpanded.delete(substepId)
-    } else {
-      newExpanded.add(substepId)
-    }
-    setExpandedSubsteps(newExpanded)
-  }
 
   const revealHint = (hintId: string) => {
     setRevealedHints(new Set([...revealedHints, hintId]))
@@ -62,201 +47,176 @@ export function PageSession({
     setRevealedSolutions(new Set([...revealedSolutions, solutionId]))
   }
 
-  if (!participant || !workshopContent) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
-    )
-  }
+  const ui = getUiState((set) => {
+    if (participantQuery.isLoading || workshopContentQuery.isLoading)
+      return set('pending')
+
+    if (!(participantQuery.isSuccess && workshopContentQuery.isSuccess))
+      return set('error')
+
+    if (workshopContentQuery.data.steps.length === 0)
+      return set('empty', { participant: participantQuery.data })
+
+    return set('default', {
+      participant: participantQuery.data,
+      workshopContent: workshopContentQuery.data,
+    })
+  })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10 shadow-sm">
+      <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold">
-                {participant.session.workshop?.title}
-              </h1>
-              <p className="text-sm text-gray-600">
-                Welcome, {participant.name} · Session:{' '}
-                {participant.session.name}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="container mx-auto px-4 py-8">
-        {workshopContent.steps.length > 0 ? (
-          <div className="space-y-6">
-            {workshopContent.steps.map((step, stepIndex) => (
-              <div key={step.id} className="bg-white rounded-lg shadow">
-                <div
-                  className="p-6 cursor-pointer hover:bg-gray-50"
-                  onClick={() => toggleStep(step.id)}
-                >
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold">
-                      Step {stepIndex + 1}: {step.title}
-                    </h2>
-                    <span className="text-2xl">
-                      {expandedSteps.has(step.id) ? '−' : '+'}
-                    </span>
-                  </div>
-                  {step.description && (
-                    <p className="text-gray-600 mt-2">{step.description}</p>
-                  )}
-                </div>
-
-                {expandedSteps.has(step.id) && (
-                  <div className="border-t p-6 bg-gray-50">
-                    {step.content && (
-                      <div className="prose max-w-none mb-6 bg-white p-4 rounded">
-                        <pre className="whitespace-pre-wrap">
-                          {step.content}
-                        </pre>
-                      </div>
-                    )}
-
-                    {/* Substeps */}
-                    <div className="space-y-4">
-                      {step.substeps.map((substep, substepIndex) => (
-                        <div
-                          key={substep.id}
-                          className="border rounded-lg bg-white"
-                        >
-                          <div
-                            className="p-4 cursor-pointer hover:bg-gray-50"
-                            onClick={() => toggleSubstep(substep.id)}
-                          >
-                            <div className="flex justify-between items-center">
-                              <h3 className="text-lg font-semibold">
-                                {stepIndex + 1}.{substepIndex + 1}{' '}
-                                {substep.title}
-                              </h3>
-                              <span className="text-xl">
-                                {expandedSubsteps.has(substep.id) ? '−' : '+'}
-                              </span>
-                            </div>
-                            {substep.description && (
-                              <p className="text-gray-600 text-sm mt-1">
-                                {substep.description}
-                              </p>
-                            )}
-                          </div>
-
-                          {expandedSubsteps.has(substep.id) && (
-                            <div className="border-t p-4 bg-gray-50">
-                              {substep.content && (
-                                <div className="prose max-w-none mb-4 bg-white p-4 rounded">
-                                  <pre className="whitespace-pre-wrap text-sm">
-                                    {substep.content}
-                                  </pre>
-                                </div>
-                              )}
-
-                              {/* Hints */}
-                              {substep.hints.length > 0 && (
-                                <div className="mb-4">
-                                  <h4 className="font-semibold mb-2">
-                                    💡 Hints
-                                  </h4>
-                                  <div className="space-y-2">
-                                    {substep.hints.map((hint, hintIndex) => (
-                                      <div key={hint.id}>
-                                        {revealedHints.has(hint.id) ? (
-                                          <div className="bg-yellow-50 border border-yellow-200 p-3 rounded">
-                                            <p className="text-sm font-medium text-yellow-800 mb-1">
-                                              Hint {hintIndex + 1}:
-                                            </p>
-                                            <p className="text-sm">
-                                              {hint.content}
-                                            </p>
-                                          </div>
-                                        ) : (
-                                          <button
-                                            onClick={() => revealHint(hint.id)}
-                                            className="w-full text-left px-3 py-2 bg-yellow-100 hover:bg-yellow-200 border border-yellow-300 rounded text-sm"
-                                          >
-                                            🔒 Click to reveal Hint{' '}
-                                            {hintIndex + 1}
-                                          </button>
-                                        )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Solutions */}
-                              {substep.solutions.length > 0 && (
-                                <div>
-                                  <h4 className="font-semibold mb-2">
-                                    ✅ Solution
-                                  </h4>
-
-                                  <div className="space-y-2">
-                                    {substep.solutions.map((solution) => (
-                                      <div key={solution.id}>
-                                        {revealedSolutions.has(solution.id) ? (
-                                          <div className="bg-green-50 border border-green-200 p-4 rounded">
-                                            <div className="bg-white p-3 rounded mb-2">
-                                              <pre className="whitespace-pre-wrap text-sm font-mono">
-                                                {solution.content}
-                                              </pre>
-                                            </div>
-                                            {solution.explanation && (
-                                              <div className="text-sm text-green-800">
-                                                <strong>Explanation:</strong>
-                                                <p className="mt-1">
-                                                  {solution.explanation}
-                                                </p>
-                                              </div>
-                                            )}
-                                          </div>
-                                        ) : (
-                                          <button
-                                            onClick={() =>
-                                              revealSolution(solution.id)
-                                            }
-                                            className="w-full text-left px-4 py-3 bg-green-100 hover:bg-green-200 border border-green-300 rounded font-semibold"
-                                          >
-                                            🔒 Click to reveal Solution
-                                          </button>
-                                        )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+          {ui
+            .match('pending', () => (
+              <div className="flex flex-col gap-1">
+                <Skeleton className="h-6 w-20" />
+                <Skeleton className="h-4 w-40" />
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <div className="text-6xl mb-4">⏳</div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Waiting for Access
-            </h2>
-            <p className="text-gray-600">
-              The workshop manager hasn't granted you access to any content yet.
-              <br />
-              Please wait while they set up your access.
-            </p>
-          </div>
-        )}
-      </div>
+            ))
+            .match('error', () => <div>Error...</div>)
+            .match(['default', 'empty'], ({ participant }) => (
+              <>
+                <h1 className="text-2xl font-bold">
+                  {participant.session.workshop?.title}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Welcome, {participant.name} · Session:{' '}
+                  {participant.session.name}
+                </p>
+              </>
+            ))
+            .exhaustive()}
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main>
+        {ui
+          .match('pending', () => (
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-xl">Loading...</div>
+            </div>
+          ))
+          .match('error', () => (
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-xl">Error...</div>
+            </div>
+          ))
+          .match('empty', () => <SessionEmptyAccess />)
+          .match('default', ({ workshopContent }) => (
+            <article className="container mx-auto px-4 py-8 max-w-5xl prose">
+              {workshopContent.steps.map((step, index) => (
+                <Fragment key={step.id}>
+                  {index !== 0 && <Separator />}
+                  <section>
+                    <h2>{step.title}</h2>
+                    {step.description && (
+                      <p className="text-muted-foreground">
+                        {step.description}
+                      </p>
+                    )}
+                    {step.content && <p>{step.content}</p>}
+
+                    {step.substeps.map((substep) => (
+                      <section key={substep.id}>
+                        <h3>{substep.title}</h3>
+                        {substep.description && (
+                          <p className="text-muted-foreground">
+                            {substep.description}
+                          </p>
+                        )}
+                        {substep.content && <p>{substep.content}</p>}
+
+                        {/* Hints */}
+                        {substep.hints.length > 0 && (
+                          <aside className="not-prose">
+                            <h4 className="text-base font-semibold mb-3">
+                              💡 Hints
+                            </h4>
+                            <div className="space-y-2">
+                              {substep.hints.map((hint, hintIndex) => (
+                                <div key={hint.id}>
+                                  {revealedHints.has(hint.id) ? (
+                                    <details
+                                      open
+                                      className="bg-yellow-50 border border-yellow-200 p-4 rounded"
+                                    >
+                                      <summary className="font-medium text-yellow-900 cursor-pointer list-none">
+                                        Hint {hintIndex + 1}
+                                      </summary>
+                                      <p className="mt-2 text-sm text-yellow-900">
+                                        {hint.content}
+                                      </p>
+                                    </details>
+                                  ) : (
+                                    <button
+                                      onClick={() => revealHint(hint.id)}
+                                      className="w-full text-left px-4 py-3 bg-yellow-100 hover:bg-yellow-200 border border-yellow-300 rounded text-sm font-medium transition-colors"
+                                    >
+                                      🔒 Click to reveal Hint {hintIndex + 1}
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </aside>
+                        )}
+
+                        {/* Solutions */}
+                        {substep.solutions.length > 0 && (
+                          <aside className="not-prose my-6">
+                            <h4 className="text-base font-semibold mb-3">
+                              ✅ Solution
+                            </h4>
+                            <div className="space-y-2">
+                              {substep.solutions.map((solution) => (
+                                <div key={solution.id}>
+                                  {revealedSolutions.has(solution.id) ? (
+                                    <details
+                                      open
+                                      className="bg-green-50 border border-green-200 p-4 rounded"
+                                    >
+                                      <summary className="font-medium text-green-900 cursor-pointer list-none">
+                                        Solution
+                                      </summary>
+                                      <code className="mt-3 p-3 bg-white rounded text-sm overflow-x-auto">
+                                        {solution.content}
+                                      </code>
+                                      {solution.explanation && (
+                                        <div className="mt-3 text-sm text-green-900">
+                                          <strong>Explanation:</strong>
+                                          <p className="mt-1">
+                                            {solution.explanation}
+                                          </p>
+                                        </div>
+                                      )}
+                                    </details>
+                                  ) : (
+                                    <button
+                                      onClick={() =>
+                                        revealSolution(solution.id)
+                                      }
+                                      className="w-full text-left px-4 py-3 bg-green-100 hover:bg-green-200 border border-green-300 rounded font-semibold transition-colors"
+                                    >
+                                      🔒 Click to reveal Solution
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </aside>
+                        )}
+                      </section>
+                    ))}
+                  </section>
+                </Fragment>
+              ))}
+            </article>
+          ))
+          .exhaustive()}
+      </main>
     </div>
   )
 }
