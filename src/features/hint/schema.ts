@@ -3,8 +3,8 @@ import { z } from 'zod'
 export type Hint = z.input<ReturnType<typeof zHint>>
 export const zHint = () =>
   z.object({
-    id: z.number(),
-    substepId: z.number(),
+    id: z.string(),
+    substepId: z.string(),
     content: z.string().min(1),
     order: z.number(),
     createdAt: z.date(),

@@ -5,8 +5,8 @@ import { zSolution } from '@/features/solution/schema'
 export type Substep = z.input<ReturnType<typeof zSubstep>>
 export const zSubstep = () =>
   z.object({
-    id: z.number(),
-    stepId: z.number(),
+    id: z.string(),
+    stepId: z.string(),
     title: z.string().min(1),
     description: z.string().nullish(),
     content: z.string().nullish(),

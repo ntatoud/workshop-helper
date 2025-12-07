@@ -62,7 +62,7 @@ const router = {
     }),
 
   listBySession: os
-    .input(z.object({ sessionId: z.number() }))
+    .input(z.object({ sessionId: z.string() }))
     .output(z.array(zParticipant()))
     .handler(async ({ input }) => {
       return await db.query.participants.findMany({

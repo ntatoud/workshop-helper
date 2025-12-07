@@ -18,7 +18,7 @@ function WorkshopDetailPage() {
   const { data: workshop, refetch } = useQuery(
     orpc.workshops.get.queryOptions({
       input: {
-        id: parseInt(workshopId),
+        id: workshopId,
       },
     }),
   )
@@ -45,7 +45,7 @@ function WorkshopDetailPage() {
 
   const handleCreateStep = () => {
     if (!workshop) return
-    const nextOrder = (workshop.steps.length || 0) + 1
+    const nextOrder = (workshop.steps?.length || 0) + 1
     createStep.mutate({
       workshopId: workshop.id,
       title: stepTitle,
@@ -57,7 +57,7 @@ function WorkshopDetailPage() {
 
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this workshop?')) {
-      deleteWorkshop.mutate({ id: parseInt(workshopId) })
+      deleteWorkshop.mutate({ id: workshopId })
     }
   }
 
@@ -156,7 +156,7 @@ function WorkshopDetailPage() {
       )}
 
       <div className="space-y-6">
-        {workshop.steps.map((step, index) => (
+        {workshop.steps?.map((step, index) => (
           <div key={step.id} className="border rounded-lg p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -184,13 +184,13 @@ function WorkshopDetailPage() {
               </div>
             )}
             <div className="mt-4 text-sm text-gray-500">
-              {step.substeps.length || 0} substeps
+              {step.substeps?.length || 0} substeps
             </div>
           </div>
         ))}
       </div>
 
-      {!workshop.steps.length && (
+      {!workshop.steps?.length && (
         <div className="text-center py-12 text-gray-500">
           No steps yet. Add your first step to get started!
         </div>

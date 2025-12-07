@@ -3,8 +3,8 @@ import { z } from 'zod'
 export type Solution = z.input<ReturnType<typeof zSolution>>
 export const zSolution = () =>
   z.object({
-    id: z.number(),
-    substepId: z.number(),
+    id: z.string(),
+    substepId: z.string(),
     content: z.string(),
     explanation: z.string().nullish(),
     createdAt: z.date(),

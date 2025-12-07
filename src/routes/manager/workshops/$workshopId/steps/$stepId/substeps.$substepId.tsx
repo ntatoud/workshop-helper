@@ -21,7 +21,7 @@ function SubstepDetailPage() {
   const { data: workshop, refetch } = useQuery(
     orpc.workshops.get.queryOptions({
       input: {
-        id: parseInt(workshopId),
+        id: workshopId,
       },
     }),
   )
@@ -68,12 +68,12 @@ function SubstepDetailPage() {
     }),
   )
 
-  const step = workshop?.steps.find((s) => s.id === parseInt(stepId))
-  const substep = step?.substeps.find((ss) => ss.id === parseInt(substepId))
+  const step = workshop?.steps?.find((s) => s.id === stepId)
+  const substep = step?.substeps?.find((ss) => ss.id === substepId)
 
   const handleCreateHint = () => {
     if (!substep) return
-    const nextOrder = (substep.hints.length || 0) + 1
+    const nextOrder = (substep.hints?.length || 0) + 1
     createHint.mutate({
       substepId: substep.id,
       content: hintContent,
@@ -92,17 +92,17 @@ function SubstepDetailPage() {
 
   const handleDeleteSubstep = () => {
     if (confirm('Are you sure you want to delete this substep?')) {
-      deleteSubstep.mutate({ id: parseInt(substepId) })
+      deleteSubstep.mutate({ id: substepId })
     }
   }
 
-  const handleDeleteHint = (hintId: number) => {
+  const handleDeleteHint = (hintId: string) => {
     if (confirm('Are you sure you want to delete this hint?')) {
       deleteHint.mutate({ id: hintId })
     }
   }
 
-  const handleDeleteSolution = (solutionId: number) => {
+  const handleDeleteSolution = (solutionId: string) => {
     if (confirm('Are you sure you want to delete this solution?')) {
       deleteSolution.mutate({ id: solutionId })
     }
@@ -243,7 +243,7 @@ function SubstepDetailPage() {
             </button>
           </div>
           <div className="space-y-4">
-            {substep.hints.map((hint, index) => (
+            {substep.hints?.map((hint, index) => (
               <div key={hint.id} className="border rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-semibold text-sm text-gray-500">
@@ -259,7 +259,7 @@ function SubstepDetailPage() {
                 <p className="whitespace-pre-wrap">{hint.content}</p>
               </div>
             ))}
-            {!substep.hints.length && (
+            {!substep.hints?.length && (
               <p className="text-gray-500 text-center py-8">No hints yet</p>
             )}
           </div>
@@ -276,7 +276,7 @@ function SubstepDetailPage() {
             </button>
           </div>
           <div className="space-y-4">
-            {substep.solutions.map((solution) => (
+            {substep.solutions?.map((solution) => (
               <div key={solution.id} className="border rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <span className="font-semibold text-sm text-green-600">
@@ -302,7 +302,7 @@ function SubstepDetailPage() {
                 )}
               </div>
             ))}
-            {!substep.solutions.length && (
+            {!substep.solutions?.length && (
               <p className="text-gray-500 text-center py-8">No solutions yet</p>
             )}
           </div>

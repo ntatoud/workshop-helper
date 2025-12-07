@@ -20,8 +20,8 @@ const router = os
     setStepAccess: os
       .input(
         z.object({
-          participantId: z.number(),
-          stepId: z.number(),
+          participantId: z.string(),
+          stepId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -62,8 +62,8 @@ const router = os
     setSubstepAccess: os
       .input(
         z.object({
-          participantId: z.number(),
-          substepId: z.number(),
+          participantId: z.string(),
+          substepId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -104,8 +104,8 @@ const router = os
     setHintAccess: os
       .input(
         z.object({
-          participantId: z.number(),
-          hintId: z.number(),
+          participantId: z.string(),
+          hintId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -146,8 +146,8 @@ const router = os
     setSolutionAccess: os
       .input(
         z.object({
-          participantId: z.number(),
-          solutionId: z.number(),
+          participantId: z.string(),
+          solutionId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -188,8 +188,8 @@ const router = os
     grantAllStepsToParticipant: os
       .input(
         z.object({
-          participantId: z.number(),
-          workshopId: z.number(),
+          participantId: z.string(),
+          workshopId: z.string(),
         }),
       )
       .handler(async ({ input }) => {
@@ -232,7 +232,7 @@ const router = os
 
     // Get all access for a participant
     getParticipantAccess: os
-      .input(z.object({ participantId: z.number() }))
+      .input(z.object({ participantId: z.string() }))
       .handler(async ({ input }) => {
         const [
           stepAccessList,
@@ -270,8 +270,8 @@ const router = os
     getWorkshopWithAccess: os
       .input(
         z.object({
-          participantId: z.number(),
-          workshopId: z.number(),
+          participantId: z.string(),
+          workshopId: z.string(),
         }),
       )
       .handler(async ({ input }) => {
@@ -363,8 +363,8 @@ const router = os
     setStepAccessForAllParticipants: os
       .input(
         z.object({
-          sessionId: z.number(),
-          stepId: z.number(),
+          sessionId: z.string(),
+          stepId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -412,8 +412,8 @@ const router = os
     setSubstepAccessForAllParticipants: os
       .input(
         z.object({
-          sessionId: z.number(),
-          substepId: z.number(),
+          sessionId: z.string(),
+          substepId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -460,8 +460,8 @@ const router = os
     setHintAccessForAllParticipants: os
       .input(
         z.object({
-          sessionId: z.number(),
-          hintId: z.number(),
+          sessionId: z.string(),
+          hintId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -508,8 +508,8 @@ const router = os
     setSolutionAccessForAllParticipants: os
       .input(
         z.object({
-          sessionId: z.number(),
-          solutionId: z.number(),
+          sessionId: z.string(),
+          solutionId: z.string(),
           hasAccess: z.boolean(),
         }),
       )
@@ -557,8 +557,8 @@ const router = os
     grantAllStepsToAllParticipants: os
       .input(
         z.object({
-          sessionId: z.number(),
-          workshopId: z.number(),
+          sessionId: z.string(),
+          workshopId: z.string(),
         }),
       )
       .handler(async ({ input }) => {

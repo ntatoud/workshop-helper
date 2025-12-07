@@ -10,14 +10,14 @@ export const Route = createFileRoute('/manager/sessions/$sessionId/')({
 function SessionManagementPage() {
   const { sessionId } = Route.useParams()
   const [selectedParticipantId, setSelectedParticipantId] = useState<
-    number | null
+    string | null
   >(null)
   const [bulkMode, setBulkMode] = useState(false)
 
   const { data: session, refetch } = useQuery(
     orpc.sessions.get.queryOptions({
       input: {
-        id: parseInt(sessionId),
+        id: sessionId,
       },
     }),
   )
@@ -25,7 +25,7 @@ function SessionManagementPage() {
   const { data: participantAccess, refetch: refetchAccess } = useQuery(
     orpc.access.getParticipantAccess.queryOptions({
       input: {
-        participantId: selectedParticipantId!,
+        participantId: selectedParticipantId ?? '',
       },
       enabled: !!selectedParticipantId,
     }),
@@ -123,12 +123,12 @@ function SessionManagementPage() {
     return <div className="container mx-auto p-8">Loading...</div>
   }
 
-  const selectedParticipant = session.participants.find(
+  const selectedParticipant = session.participants?.find(
     (p) => p.id === selectedParticipantId,
   )
 
   // Individual participant handlers
-  const handleToggleStepAccess = (stepId: number, currentAccess: boolean) => {
+  const handleToggleStepAccess = (stepId: string, currentAccess: boolean) => {
     if (!selectedParticipantId) return
     setStepAccess.mutate({
       participantId: selectedParticipantId,
@@ -138,7 +138,7 @@ function SessionManagementPage() {
   }
 
   const handleToggleSubstepAccess = (
-    substepId: number,
+    substepId: string,
     currentAccess: boolean,
   ) => {
     if (!selectedParticipantId) return
@@ -149,7 +149,7 @@ function SessionManagementPage() {
     })
   }
 
-  const handleToggleHintAccess = (hintId: number, currentAccess: boolean) => {
+  const handleToggleHintAccess = (hintId: string, currentAccess: boolean) => {
     if (!selectedParticipantId) return
     setHintAccess.mutate({
       participantId: selectedParticipantId,
@@ -159,7 +159,7 @@ function SessionManagementPage() {
   }
 
   const handleToggleSolutionAccess = (
-    solutionId: number,
+    solutionId: string,
     currentAccess: boolean,
   ) => {
     if (!selectedParticipantId) return
@@ -175,13 +175,13 @@ function SessionManagementPage() {
     if (confirm('Grant access to all steps for this participant?')) {
       grantAllSteps.mutate({
         participantId: selectedParticipantId,
-        workshopId: session.workshop.id,
+        workshopId: session.workshop?.id ?? '',
       })
     }
   }
 
   // Bulk handlers (all participants)
-  const handleBulkToggleStep = (stepId: number, grant: boolean) => {
+  const handleBulkToggleStep = (stepId: string, grant: boolean) => {
     setStepAccessAll.mutate({
       sessionId: session.id,
       stepId,
@@ -189,7 +189,7 @@ function SessionManagementPage() {
     })
   }
 
-  const handleBulkToggleSubstep = (substepId: number, grant: boolean) => {
+  const handleBulkToggleSubstep = (substepId: string, grant: boolean) => {
     setSubstepAccessAll.mutate({
       sessionId: session.id,
       substepId,
@@ -197,7 +197,7 @@ function SessionManagementPage() {
     })
   }
 
-  const handleBulkToggleHint = (hintId: number, grant: boolean) => {
+  const handleBulkToggleHint = (hintId: string, grant: boolean) => {
     setHintAccessAll.mutate({
       sessionId: session.id,
       hintId,
@@ -205,7 +205,7 @@ function SessionManagementPage() {
     })
   }
 
-  const handleBulkToggleSolution = (solutionId: number, grant: boolean) => {
+  const handleBulkToggleSolution = (solutionId: string, grant: boolean) => {
     setSolutionAccessAll.mutate({
       sessionId: session.id,
       solutionId,
@@ -216,42 +216,42 @@ function SessionManagementPage() {
   const handleBulkGrantAllSteps = () => {
     if (
       confirm(
-        `Grant access to ALL steps for ALL ${session.participants.length} participant(s)?`,
+        `Grant access to ALL steps for ALL ${session.participants?.length} participant(s)?`,
       )
     ) {
       grantAllStepsAll.mutate({
         sessionId: session.id,
-        workshopId: session.workshop.id,
+        workshopId: session.workshop?.id ?? '',
       })
     }
   }
 
-  const handleRemoveParticipant = (participantId: number) => {
+  const handleRemoveParticipant = (participantId: string) => {
     if (confirm('Are you sure you want to remove this participant?')) {
       removeParticipant.mutate({ id: participantId })
     }
   }
 
   // Helper to check if item has access
-  const hasStepAccess = (stepId: number) => {
+  const hasStepAccess = (stepId: string) => {
     return participantAccess?.steps.find(
       (a) => a.stepId === stepId && a.hasAccess,
     )
   }
 
-  const hasSubstepAccess = (substepId: number) => {
+  const hasSubstepAccess = (substepId: string) => {
     return participantAccess?.substeps.find(
       (a) => a.substepId === substepId && a.hasAccess,
     )
   }
 
-  const hasHintAccess = (hintId: number) => {
+  const hasHintAccess = (hintId: string) => {
     return participantAccess?.hints.find(
       (a) => a.hintId === hintId && a.hasAccess,
     )
   }
 
-  const hasSolutionAccess = (solutionId: number) => {
+  const hasSolutionAccess = (solutionId: string) => {
     return participantAccess?.solutions.find(
       (a) => a.solutionId === solutionId && a.hasAccess,
     )
@@ -269,7 +269,7 @@ function SessionManagementPage() {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-4xl font-bold">{session.name}</h1>
-            <p className="text-gray-600 mt-2">{session.workshop.title}</p>
+            <p className="text-gray-600 mt-2">{session.workshop?.title}</p>
             <div className="mt-4 bg-gray-100 p-4 rounded inline-block">
               <p className="text-sm text-gray-600">Join Code:</p>
               <p className="text-3xl font-bold tracking-wider">
@@ -289,7 +289,7 @@ function SessionManagementPage() {
         {/* Participants List */}
         <div className="lg:col-span-1">
           <h2 className="text-2xl font-bold mb-4">
-            Participants ({session.participants.length || 0})
+            Participants ({session.participants?.length || 0})
           </h2>
 
           {/* Mode Toggle */}
@@ -319,7 +319,7 @@ function SessionManagementPage() {
 
           {!bulkMode && (
             <div className="space-y-2">
-              {session.participants.map((participant) => (
+              {session.participants?.map((participant) => (
                 <div
                   key={participant.id}
                   className={`p-4 border rounded cursor-pointer transition-colors ${
@@ -348,7 +348,7 @@ function SessionManagementPage() {
                   </div>
                 </div>
               ))}
-              {!session.participants.length && (
+              {!session.participants?.length && (
                 <p className="text-gray-500 text-center py-8">
                   No participants yet
                 </p>
@@ -364,7 +364,7 @@ function SessionManagementPage() {
                   Bulk Access Mode Active
                 </p>
                 <p className="text-sm text-purple-700 mt-2">
-                  All {session.participants.length} participants
+                  All {session.participants?.length} participants
                 </p>
                 <p className="text-xs text-purple-600 mt-1">
                   Use controls on the right →
@@ -386,7 +386,7 @@ function SessionManagementPage() {
                       Bulk Access Control
                     </h2>
                     <p className="text-sm text-purple-700 mt-1">
-                      Managing access for ALL {session.participants.length}{' '}
+                      Managing access for ALL {session.participants?.length}{' '}
                       participant(s)
                     </p>
                   </div>
@@ -403,7 +403,7 @@ function SessionManagementPage() {
               </div>
 
               <div className="space-y-6">
-                {session.workshop.steps.map((step, stepIndex) => (
+                {session.workshop?.steps?.map((step, stepIndex) => (
                   <div key={step.id} className="border rounded-lg p-4">
                     <div className="flex items-center gap-3 mb-4">
                       <button
@@ -425,9 +425,9 @@ function SessionManagementPage() {
                       </h3>
                     </div>
 
-                    {step.substeps.length > 0 && (
+                    {(step.substeps?.length ?? 0) > 0 && (
                       <div className="ml-8 space-y-4">
-                        {step.substeps.map((substep, substepIndex) => (
+                        {step.substeps?.map((substep, substepIndex) => (
                           <div key={substep.id} className="border-l-2 pl-4">
                             <div className="flex items-center gap-3 mb-3">
                               <button
@@ -456,13 +456,13 @@ function SessionManagementPage() {
 
                             <div className="ml-7 space-y-2">
                               {/* Hints */}
-                              {substep.hints.length > 0 && (
+                              {(substep.hints?.length ?? 0) > 0 && (
                                 <div>
                                   <p className="text-sm font-medium text-gray-600 mb-1">
                                     Hints:
                                   </p>
                                   <div className="space-y-1">
-                                    {substep.hints.map((hint, hintIndex) => (
+                                    {substep.hints?.map((hint, hintIndex) => (
                                       <div
                                         key={hint.id}
                                         className="flex items-center gap-2"
@@ -495,13 +495,13 @@ function SessionManagementPage() {
                               )}
 
                               {/* Solutions */}
-                              {substep.solutions.length > 0 && (
+                              {(substep.solutions?.length ?? 0) > 0 && (
                                 <div>
                                   <p className="text-sm font-medium text-gray-600 mb-1">
                                     Solutions:
                                   </p>
                                   <div className="space-y-1">
-                                    {substep.solutions.map((solution) => (
+                                    {substep.solutions?.map((solution) => (
                                       <div
                                         key={solution.id}
                                         className="flex items-center gap-2"
@@ -567,7 +567,7 @@ function SessionManagementPage() {
               </div>
 
               <div className="space-y-6">
-                {session.workshop.steps.map((step, stepIndex) => {
+                {session.workshop?.steps?.map((step, stepIndex) => {
                   const stepHasAccess = !!hasStepAccess(step.id)
                   return (
                     <div key={step.id} className="border rounded-lg p-4">
@@ -587,7 +587,7 @@ function SessionManagementPage() {
 
                       {stepHasAccess && (
                         <div className="ml-8 space-y-4">
-                          {step.substeps.map((substep, substepIndex) => {
+                          {step.substeps?.map((substep, substepIndex) => {
                             const substepHasAccess = !!hasSubstepAccess(
                               substep.id,
                             )
@@ -614,13 +614,13 @@ function SessionManagementPage() {
                                 {substepHasAccess && (
                                   <div className="ml-7 space-y-2">
                                     {/* Hints */}
-                                    {substep.hints.length > 0 && (
+                                    {(substep.hints?.length ?? 0) > 0 && (
                                       <div>
                                         <p className="text-sm font-medium text-gray-600 mb-2">
                                           Hints:
                                         </p>
                                         <div className="space-y-1">
-                                          {substep.hints.map(
+                                          {substep.hints?.map(
                                             (hint, hintIndex) => {
                                               const hintHasAccess =
                                                 !!hasHintAccess(hint.id)
@@ -652,37 +652,39 @@ function SessionManagementPage() {
                                     )}
 
                                     {/* Solutions */}
-                                    {substep.solutions.length > 0 && (
+                                    {(substep.solutions?.length ?? 0) > 0 && (
                                       <div>
                                         <p className="text-sm font-medium text-gray-600 mb-2">
                                           Solutions:
                                         </p>
                                         <div className="space-y-1">
-                                          {substep.solutions.map((solution) => {
-                                            const solutionHasAccess =
-                                              !!hasSolutionAccess(solution.id)
-                                            return (
-                                              <div
-                                                key={solution.id}
-                                                className="flex items-center gap-2"
-                                              >
-                                                <input
-                                                  type="checkbox"
-                                                  checked={solutionHasAccess}
-                                                  onChange={() =>
-                                                    handleToggleSolutionAccess(
-                                                      solution.id,
-                                                      solutionHasAccess,
-                                                    )
-                                                  }
-                                                  className="w-3 h-3"
-                                                />
-                                                <span className="text-sm">
-                                                  Solution
-                                                </span>
-                                              </div>
-                                            )
-                                          })}
+                                          {substep.solutions?.map(
+                                            (solution) => {
+                                              const solutionHasAccess =
+                                                !!hasSolutionAccess(solution.id)
+                                              return (
+                                                <div
+                                                  key={solution.id}
+                                                  className="flex items-center gap-2"
+                                                >
+                                                  <input
+                                                    type="checkbox"
+                                                    checked={solutionHasAccess}
+                                                    onChange={() =>
+                                                      handleToggleSolutionAccess(
+                                                        solution.id,
+                                                        solutionHasAccess,
+                                                      )
+                                                    }
+                                                    className="w-3 h-3"
+                                                  />
+                                                  <span className="text-sm">
+                                                    Solution
+                                                  </span>
+                                                </div>
+                                              )
+                                            },
+                                          )}
                                         </div>
                                       </div>
                                     )}

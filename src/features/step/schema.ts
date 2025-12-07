@@ -4,8 +4,8 @@ import { zSubstep } from '@/features/substep/schema'
 export type Step = z.input<ReturnType<typeof zStep>>
 export const zStep = () =>
   z.object({
-    id: z.number(),
-    workshopId: z.number(),
+    id: z.string(),
+    workshopId: z.string(),
     title: z.string().min(1),
     description: z.string().nullable(),
     content: z.string().nullable(),

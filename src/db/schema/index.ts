@@ -2,17 +2,17 @@ import {
   boolean,
   integer,
   pgTable,
-  serial,
   text,
   timestamp,
   unique,
+  uuid,
   varchar,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
 // Workshops table
 export const workshops = pgTable('workshops', {
-  id: serial('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom().defaultRandom(),
   title: text('title').notNull(),
   description: text('description'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -21,8 +21,8 @@ export const workshops = pgTable('workshops', {
 
 // Steps table - main steps of a workshop
 export const steps = pgTable('steps', {
-  id: serial('id').primaryKey(),
-  workshopId: integer('workshop_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  workshopId: uuid('workshop_id')
     .notNull()
     .references(() => workshops.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
@@ -35,8 +35,8 @@ export const steps = pgTable('steps', {
 
 // Substeps table - substeps within a step
 export const substeps = pgTable('substeps', {
-  id: serial('id').primaryKey(),
-  stepId: integer('step_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  stepId: uuid('step_id')
     .notNull()
     .references(() => steps.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
@@ -49,8 +49,8 @@ export const substeps = pgTable('substeps', {
 
 // Hints table - hints for substeps
 export const hints = pgTable('hints', {
-  id: serial('id').primaryKey(),
-  substepId: integer('substep_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  substepId: uuid('substep_id')
     .notNull()
     .references(() => substeps.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
@@ -60,8 +60,8 @@ export const hints = pgTable('hints', {
 
 // Solutions table - solutions for substeps
 export const solutions = pgTable('solutions', {
-  id: serial('id').primaryKey(),
-  substepId: integer('substep_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  substepId: uuid('substep_id')
     .notNull()
     .references(() => substeps.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
@@ -72,8 +72,8 @@ export const solutions = pgTable('solutions', {
 
 // Sessions table - live workshop sessions
 export const sessions = pgTable('sessions', {
-  id: serial('id').primaryKey(),
-  workshopId: integer('workshop_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  workshopId: uuid('workshop_id')
     .notNull()
     .references(() => workshops.id, { onDelete: 'cascade' }),
   name: text('name').notNull(), // e.g., "Monday Morning Workshop"
@@ -88,8 +88,8 @@ export const sessions = pgTable('sessions', {
 export const participants = pgTable(
   'participants',
   {
-    id: serial('id').primaryKey(),
-    sessionId: integer('session_id')
+    id: uuid('id').primaryKey().defaultRandom(),
+    sessionId: uuid('session_id')
       .notNull()
       .references(() => sessions.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
@@ -107,11 +107,11 @@ export const participants = pgTable(
 export const stepAccess = pgTable(
   'step_access',
   {
-    id: serial('id').primaryKey(),
-    participantId: integer('participant_id')
+    id: uuid('id').primaryKey().defaultRandom(),
+    participantId: uuid('participant_id')
       .notNull()
       .references(() => participants.id, { onDelete: 'cascade' }),
-    stepId: integer('step_id')
+    stepId: uuid('step_id')
       .notNull()
       .references(() => steps.id, { onDelete: 'cascade' }),
     hasAccess: boolean('has_access').default(false).notNull(),
@@ -126,11 +126,11 @@ export const stepAccess = pgTable(
 export const substepAccess = pgTable(
   'substep_access',
   {
-    id: serial('id').primaryKey(),
-    participantId: integer('participant_id')
+    id: uuid('id').primaryKey().defaultRandom(),
+    participantId: uuid('participant_id')
       .notNull()
       .references(() => participants.id, { onDelete: 'cascade' }),
-    substepId: integer('substep_id')
+    substepId: uuid('substep_id')
       .notNull()
       .references(() => substeps.id, { onDelete: 'cascade' }),
     hasAccess: boolean('has_access').default(false).notNull(),
@@ -145,11 +145,11 @@ export const substepAccess = pgTable(
 export const hintAccess = pgTable(
   'hint_access',
   {
-    id: serial('id').primaryKey(),
-    participantId: integer('participant_id')
+    id: uuid('id').primaryKey().defaultRandom(),
+    participantId: uuid('participant_id')
       .notNull()
       .references(() => participants.id, { onDelete: 'cascade' }),
-    hintId: integer('hint_id')
+    hintId: uuid('hint_id')
       .notNull()
       .references(() => hints.id, { onDelete: 'cascade' }),
     hasAccess: boolean('has_access').default(false).notNull(),
@@ -164,11 +164,11 @@ export const hintAccess = pgTable(
 export const solutionAccess = pgTable(
   'solution_access',
   {
-    id: serial('id').primaryKey(),
-    participantId: integer('participant_id')
+    id: uuid('id').primaryKey().defaultRandom(),
+    participantId: uuid('participant_id')
       .notNull()
       .references(() => participants.id, { onDelete: 'cascade' }),
-    solutionId: integer('solution_id')
+    solutionId: uuid('solution_id')
       .notNull()
       .references(() => solutions.id, { onDelete: 'cascade' }),
     hasAccess: boolean('has_access').default(false).notNull(),

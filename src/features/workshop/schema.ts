@@ -4,7 +4,7 @@ import { zStep } from '@/features/step/schema'
 export type Workshop = z.input<ReturnType<typeof zWorkshop>>
 export const zWorkshop = () =>
   z.object({
-    id: z.number(),
+    id: z.string(),
     title: z.string().min(1),
     description: z.string().nullish(),
     steps: z.array(zStep()).optional(),

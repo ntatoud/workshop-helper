@@ -5,8 +5,8 @@ import { zParticipant } from '@/features/participant/schema'
 export type Session = z.input<ReturnType<typeof zSession>>
 export const zSession = () =>
   z.object({
-    id: z.number(),
-    workshopId: z.number(),
+    id: z.string(),
+    workshopId: z.string(),
     workshop: zWorkshop().optional(),
     participants: z.array(zParticipant()).optional(),
     name: z.string().min(1),

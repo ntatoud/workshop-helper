@@ -8,6 +8,7 @@
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
+    "lint:ts": "tsc --noEmit",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix",
     "dk:init": "docker compose up -d",

@@ -7,19 +7,19 @@ export function PageSession({
 }: {
   params: { participantId: string }
 }) {
-  const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set())
-  const [expandedSubsteps, setExpandedSubsteps] = useState<Set<number>>(
+  const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set())
+  const [expandedSubsteps, setExpandedSubsteps] = useState<Set<string>>(
     new Set(),
   )
-  const [revealedHints, setRevealedHints] = useState<Set<number>>(new Set())
-  const [revealedSolutions, setRevealedSolutions] = useState<Set<number>>(
+  const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set())
+  const [revealedSolutions, setRevealedSolutions] = useState<Set<string>>(
     new Set(),
   )
 
   const { data: participant } = useQuery(
     orpc.participants.get.queryOptions({
       input: {
-        id: parseInt(participantId),
+        id: participantId,
       },
     }),
   )
@@ -34,7 +34,7 @@ export function PageSession({
     }),
   )
 
-  const toggleStep = (stepId: number) => {
+  const toggleStep = (stepId: string) => {
     const newExpanded = new Set(expandedSteps)
     if (newExpanded.has(stepId)) {
       newExpanded.delete(stepId)
@@ -44,7 +44,7 @@ export function PageSession({
     setExpandedSteps(newExpanded)
   }
 
-  const toggleSubstep = (substepId: number) => {
+  const toggleSubstep = (substepId: string) => {
     const newExpanded = new Set(expandedSubsteps)
     if (newExpanded.has(substepId)) {
       newExpanded.delete(substepId)
@@ -54,11 +54,11 @@ export function PageSession({
     setExpandedSubsteps(newExpanded)
   }
 
-  const revealHint = (hintId: number) => {
+  const revealHint = (hintId: string) => {
     setRevealedHints(new Set([...revealedHints, hintId]))
   }
 
-  const revealSolution = (solutionId: number) => {
+  const revealSolution = (solutionId: string) => {
     setRevealedSolutions(new Set([...revealedSolutions, solutionId]))
   }
 

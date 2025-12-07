@@ -20,7 +20,7 @@ function StepDetailPage() {
   const { data: workshop, refetch } = useQuery(
     orpc.workshops.get.queryOptions({
       input: {
-        id: parseInt(workshopId),
+        id: workshopId,
       },
     }),
   )
@@ -48,7 +48,7 @@ function StepDetailPage() {
     }),
   )
 
-  const step = workshop?.steps?.find((s) => s.id === parseInt(stepId))
+  const step = workshop?.steps?.find((s) => s.id === stepId)
 
   const handleCreateSubstep = () => {
     if (!step) return
@@ -64,7 +64,7 @@ function StepDetailPage() {
 
   const handleDeleteStep = () => {
     if (confirm('Are you sure you want to delete this step?')) {
-      deleteStep.mutate({ id: parseInt(stepId) })
+      deleteStep.mutate({ id: stepId })
     }
   }
 
@@ -190,7 +190,7 @@ function StepDetailPage() {
                 params={{
                   workshopId,
                   stepId,
-                  substepId: substep.id.toString(),
+                  substepId: substep.id,
                 }}
                 className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200"
               >

@@ -94,7 +94,7 @@ function WorkshopsPage() {
           <Link
             key={workshop.id}
             to="/manager/workshops/$workshopId"
-            params={{ workshopId: workshop.id.toString() }}
+            params={{ workshopId: workshop.id }}
             className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
           >
             <h3 className="text-xl font-semibold mb-2">{workshop.title}</h3>

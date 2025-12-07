@@ -10,7 +10,7 @@ export const Route = createFileRoute('/manager/sessions/')({
 function SessionsPage() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [sessionName, setSessionName] = useState('')
-  const [selectedWorkshopId, setSelectedWorkshopId] = useState<number | null>(
+  const [selectedWorkshopId, setSelectedWorkshopId] = useState<string | null>(
     null,
   )
 
@@ -44,7 +44,7 @@ function SessionsPage() {
     })
   }
 
-  const handleEndSession = (sessionId: number) => {
+  const handleEndSession = (sessionId: string) => {
     if (confirm('Are you sure you want to end this session?')) {
       endSession.mutate({ id: sessionId })
     }
@@ -85,9 +85,7 @@ function SessionsPage() {
                 </label>
                 <select
                   value={selectedWorkshopId || ''}
-                  onChange={(e) =>
-                    setSelectedWorkshopId(Number(e.target.value))
-                  }
+                  onChange={(e) => setSelectedWorkshopId(e.target.value)}
                   className="w-full px-3 py-2 border rounded"
                 >
                   <option value="">-- Select a workshop --</option>
