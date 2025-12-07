@@ -3,8 +3,8 @@ import { REGEXP_ONLY_DIGITS_AND_CHARS } from 'input-otp'
 
 import type { SessionJoinFormFields } from '@/features/session/schema'
 import { withForm } from '@/lib/form'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+import { Field, FieldError } from '@/components/ui/field'
+
 import {
   InputOTP,
   InputOTPGroup,

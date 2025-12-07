@@ -104,7 +104,7 @@ function WorkshopsPage() {
               </p>
             )}
             <div className="mt-4 text-sm text-gray-500">
-              {workshop.steps.length || 0} steps
+              {workshop.steps?.length || 0} steps
             </div>
           </Link>
         ))}
