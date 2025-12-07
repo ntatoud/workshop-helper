@@ -38,3 +38,13 @@ export const zSessionUpdateFormFields = () =>
       name: zSession().shape.name.optional(),
       isActive: zSession().shape.isActive.optional(),
     })
+
+export type SessionJoinFormFields = z.input<
+  ReturnType<typeof zSessionJoinFormFields>
+>
+
+export const zSessionJoinFormFields = () =>
+  z.object({
+    name: z.string().min(1),
+    code: zSession().shape.code,
+  })

@@ -3,14 +3,17 @@ import { z } from 'zod'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { participants } from '@/db/schema'
-import {
-  zParticipant,
-  zParticipantJoinFormFields,
-} from '@/features/participant/schema'
+import { zParticipant } from '@/features/participant/schema'
+import { zSession } from '@/features/session/schema'
 
 const router = {
   join: os
-    .input(zParticipantJoinFormFields())
+    .input(
+      zParticipant().pick({
+        sessionId: true,
+        name: true,
+      }),
+    )
     .output(zParticipant())
     .handler(async ({ input }) => {
       try {
@@ -34,7 +37,11 @@ const router = {
 
   get: os
     .input(zParticipant().pick({ id: true }))
-    .output(zParticipant())
+    .output(
+      zParticipant().extend({
+        session: zSession(),
+      }),
+    )
     .handler(async ({ input }) => {
       const participant = await db.query.participants.findFirst({
         where: eq(participants.id, input.id),

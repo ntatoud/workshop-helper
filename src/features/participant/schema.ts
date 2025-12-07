@@ -8,12 +8,3 @@ export const zParticipant = () =>
     name: z.string().min(1),
     joinedAt: z.date(),
   })
-
-export type ParticipantJoinFormFields = z.input<
-  ReturnType<typeof zParticipantJoinFormFields>
->
-export const zParticipantJoinFormFields = () =>
-  zParticipant().pick({
-    sessionId: true,
-    name: true,
-  })
