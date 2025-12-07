@@ -49,9 +49,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <header>
-          <h1>Workshop helper</h1>
-        </header>
         {children}
         <TanStackDevtools
           config={{
