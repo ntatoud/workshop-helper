@@ -1,0 +1,15 @@
+# EXAMPLE USAGE:
+#
+#   Refer for explanation to following link:
+#   https://lefthook.dev/configuration/
+pre-commit:
+  parallel: true
+  jobs:
+    - name: Lint staged code
+      run: bun eslint {staged_files}
+      glob: '*.{js,ts,jsx,tsx}'
+
+    - name: Format staged code
+      run: bun prettier {staged_files}
+      glob: '*.{js,ts,jsx,tsx}'
+      stage_fixed: true
