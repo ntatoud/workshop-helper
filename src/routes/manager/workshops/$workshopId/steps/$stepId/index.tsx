@@ -1,7 +1,13 @@
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
+
 import { orpc } from '@/orpc/client'
+
+import { WorkshopEditor } from '@/components/workshop-editor'
+import { MarkdownRenderer } from '@/components/markdown-render'
+
+import { WorkshopViewer } from '@/components/workshop-viewer'
 
 export const Route = createFileRoute(
   '/manager/workshops/$workshopId/steps/$stepId/',
@@ -137,13 +143,7 @@ function StepDetailPage() {
                 <label className="block text-sm font-medium mb-1">
                   Content
                 </label>
-                <textarea
-                  value={substepContent}
-                  onChange={(e) => setSubstepContent(e.target.value)}
-                  className="w-full px-3 py-2 border rounded"
-                  placeholder="Substep content"
-                  rows={8}
-                />
+                <WorkshopEditor />
               </div>
               <div className="flex gap-2 justify-end">
                 <button
@@ -165,10 +165,33 @@ function StepDetailPage() {
         </div>
       )}
 
+      <WorkshopViewer
+        content={[
+          {
+            children: [
+              {
+                text: 'Title',
+              },
+            ],
+            type: 'h1',
+            id: 'HkWTSmSs8K',
+          },
+          {
+            type: 'h2',
+            id: 'KKVpflkern',
+            children: [
+              {
+                text: 'subtitle',
+              },
+            ],
+          },
+        ]}
+      />
+
       {step.content && (
         <div className="mb-8 prose max-w-none bg-gray-50 p-6 rounded">
           <h3 className="text-lg font-semibold mb-2">Step Content</h3>
-          {step.content}
+          <MarkdownRenderer content={step.content} />
         </div>
       )}
 
@@ -197,11 +220,7 @@ function StepDetailPage() {
                 Edit
               </Link>
             </div>
-            {substep.content && (
-              <div className="prose max-w-none bg-gray-50 p-4 rounded mb-4">
-                {substep.content}
-              </div>
-            )}
+            {substep.content && <MarkdownRenderer content={substep.content} />}
             <div className="flex gap-4 text-sm text-gray-500">
               <span>{substep.hints?.length || 0} hints</span>
               <span>{substep.solutions?.length || 0} solutions</span>
