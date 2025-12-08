@@ -12,8 +12,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { CodeWithCopy } from '@/components/code-with-copy'
 import { Button } from '@/components/ui/button'
+import { MarkdownRenderer } from '@/components/markdown-render'
 
 const REFETCH_ACCESSES_INTERVAL_SECONDS = 5
 const REFETCH_ACCESSES_INTERVAL_MS = REFETCH_ACCESSES_INTERVAL_SECONDS * 1000
@@ -111,21 +111,21 @@ export function PageSession({
                   <section>
                     <h2>{step.title}</h2>
                     {step.description && (
-                      <p className="text-muted-foreground">
-                        {step.description}
-                      </p>
+                      <MarkdownRenderer content={step.description} />
                     )}
-                    {step.content && <p>{step.content}</p>}
+                    {step.content && (
+                      <MarkdownRenderer content={step.content} />
+                    )}
 
                     {step.substeps.map((substep) => (
                       <section key={substep.id}>
                         <h3>{substep.title}</h3>
                         {substep.description && (
-                          <p className="text-muted-foreground">
-                            {substep.description}
-                          </p>
+                          <MarkdownRenderer content={substep.description} />
                         )}
-                        {substep.content && <p>{substep.content}</p>}
+                        {substep.content && (
+                          <MarkdownRenderer content={substep.content} />
+                        )}
 
                         <div className="space-y-6 w-full max-w-3xl">
                           {substep.hints.length > 0 && (
@@ -160,7 +160,9 @@ export function PageSession({
 
                                     <AccordionContent className="px-4 pb-4 pt-1">
                                       <div className="pl-7 text-amber-900/90 leading-relaxed text-sm">
-                                        {hint.content}
+                                        <MarkdownRenderer
+                                          content={hint.content}
+                                        />
                                       </div>
                                     </AccordionContent>
                                   </AccordionItem>
@@ -203,7 +205,9 @@ export function PageSession({
 
                                     <AccordionContent className="bg-white">
                                       <div className="flex flex-col">
-                                        <CodeWithCopy code={solution.content} />
+                                        <MarkdownRenderer
+                                          content={solution.content}
+                                        />
 
                                         {solution.explanation && (
                                           <div className="p-4 bg-indigo-50/30 flex gap-3 text-sm text-slate-700">
@@ -213,7 +217,9 @@ export function PageSession({
                                                 Why this works
                                               </strong>
                                               <p className="leading-relaxed text-slate-600">
-                                                {solution.explanation}
+                                                <MarkdownRenderer
+                                                  content={solution.explanation}
+                                                />
                                               </p>
                                             </div>
                                           </div>

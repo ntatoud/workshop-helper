@@ -1,12 +1,12 @@
 import { Check, Copy } from 'lucide-react'
 import { useState } from 'react'
 
-export function CodeWithCopy({ code }: { code: string }) {
+export function CodeWithCopy({ children }: { children: string }) {
   const [isCopied, setIsCopied] = useState(false)
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(code)
+      await navigator.clipboard.writeText(children)
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000) // Reset after 2s
     } catch (err) {
@@ -30,7 +30,7 @@ export function CodeWithCopy({ code }: { code: string }) {
       </button>
 
       <pre className="p-4 pt-10 sm:pt-4 bg-slate-950 text-slate-50 text-sm overflow-x-auto font-mono border-b border-slate-100 rounded-t-sm">
-        <code>{code}</code>
+        <code>{children}</code>
       </pre>
     </div>
   )
