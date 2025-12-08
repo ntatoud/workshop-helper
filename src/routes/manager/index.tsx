@@ -1,10 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { PageDashboard } from '@/features/dashboard/manager/page-dashboard'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/manager/')({
   component: RouteComponent,
+  beforeLoad: () => {
+    throw redirect({ to: '/manager/workshops' })
+  },
 })
 
 function RouteComponent() {
-  return <PageDashboard />
+  return null
 }

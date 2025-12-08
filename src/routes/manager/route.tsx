@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { GuardManager } from '@/features/auth/guard-manager'
+import { Layout } from '@/layouts/manager/layout'
 
 export const Route = createFileRoute('/manager')({
   component: RouteComponent,
@@ -8,7 +9,9 @@ export const Route = createFileRoute('/manager')({
 function RouteComponent() {
   return (
     <GuardManager>
-      <Outlet />
+      <Layout>
+        <Outlet />
+      </Layout>
     </GuardManager>
   )
 }

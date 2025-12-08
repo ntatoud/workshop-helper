@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 
 import { toast } from 'sonner'
+import { ArrowRight, Settings } from 'lucide-react'
 import { orpc } from '@/orpc/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +18,8 @@ import {
   FormJoinSession,
   joinSessionFormOptions,
 } from '@/features/session/form-join-session'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { ManagerOnly } from '@/features/auth/manager-only'
 
 export function PageJoinSession() {
   const navigate = useNavigate()
@@ -57,7 +60,7 @@ export function PageJoinSession() {
         void form.handleSubmit()
       }}
     >
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex flex-col items-center gap-8 justify-center bg-linear-to-br from-blue-50 to-indigo-100">
         <Card>
           <CardHeader className="text-center">
             <CardTitle>Join Workshop</CardTitle>
@@ -96,6 +99,24 @@ export function PageJoinSession() {
             <p>Get the session code from your workshop manager</p>
           </CardFooter>
         </Card>
+
+        <ManagerOnly>
+          <Link
+            to="/manager/workshops"
+            aria-label="Go to manager panel"
+            className="w-full max-w-md"
+          >
+            <Alert className="relative w-full">
+              <Settings />
+
+              <ArrowRight className="absolute top-3 right-3" />
+              <AlertTitle>Manager</AlertTitle>
+              <AlertDescription>
+                Gère les worshops et les sessions en direct.
+              </AlertDescription>
+            </Alert>
+          </Link>
+        </ManagerOnly>
       </div>
     </form>
   )
