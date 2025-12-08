@@ -3,7 +3,9 @@ import {
   GalleryVerticalEnd,
   HammerIcon,
   HomeIcon,
+  PanelLeftIcon,
   RadioIcon,
+  XIcon,
 } from 'lucide-react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
 import {
@@ -52,19 +54,29 @@ export function ManagerSidebar({
   return (
     <Sidebar {...props} collapsible="icon">
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-6 items-center justify-center rounded-md">
-                <GalleryVerticalEnd className="size-4" />
-              </div>
-              <span className="font-medium">Workshop Helper</span>
-            </SidebarMenuButton>
-            <SidebarMenuAction>
-              <SidebarTrigger />
-            </SidebarMenuAction>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <div className="flex items-center">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              >
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8  items-center justify-center rounded-md">
+                  <GalleryVerticalEnd className="size-4" />
+                </div>
+                <span className="font-medium">Workshop Helper</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+          <SidebarTrigger
+            icon={
+              <>
+                <XIcon className="md:hidden" />
+                <PanelLeftIcon className="hidden md:block rtl:rotate-180" />
+              </>
+            }
+          />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         {navManagement.map((navItem) => (

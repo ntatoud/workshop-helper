@@ -21,10 +21,12 @@ export function PageLayoutTopbar({
   endActions?: React.ReactNode
   children?: React.ReactNode
 }) {
-  const { open } = useSidebar()
+  const { open, isMobile } = useSidebar()
+
+  const showSidebarTrigger = !open || isMobile
   return (
     <div className="flex px-2 items-center h-14 w-full gap-2 border-b border-border">
-      {!open && (
+      {showSidebarTrigger && (
         <>
           <SidebarTrigger />
           <Separator
@@ -38,13 +40,13 @@ export function PageLayoutTopbar({
           <div className="flex gap-2 items-center">{startActions}</div>
           <Separator
             orientation="vertical"
-            className={cn('max-h-6', { '-ml-1': !open })}
+            className={cn('max-h-6', { '-ml-1': showSidebarTrigger })}
           />
         </>
       )}
       <div
         className={cn('flex flex-1 items-center', {
-          'ml-1': open || startActions,
+          'ml-1': !showSidebarTrigger || startActions,
         })}
       >
         {children}
