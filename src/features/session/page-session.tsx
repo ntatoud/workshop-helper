@@ -1,11 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { getUiState } from '@bearstudio/ui-state'
+import { CheckCircle2, Lightbulb, Lock, Unlock } from 'lucide-react'
 import { orpc } from '@/orpc/client'
 import { Skeleton } from '@/components/ui/skeleton'
 import { SessionEmptyAccess } from '@/features/session/session-empty-access'
 import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { CodeWithCopy } from '@/components/code-with-copy'
 
 const REFETCH_ACCESSES_INTERVAL_SECONDS = 5
 const REFETCH_ACCESSES_INTERVAL_MS = REFETCH_ACCESSES_INTERVAL_SECONDS * 1000
@@ -15,16 +22,9 @@ export function PageSession({
 }: {
   params: { participantId: string }
 }) {
-  const [revealedHints, setRevealedHints] = useState<Set<string>>(new Set())
-  const [revealedSolutions, setRevealedSolutions] = useState<Set<string>>(
-    new Set(),
-  )
-
   const participantQuery = useQuery(
     orpc.participants.get.queryOptions({
-      input: {
-        id: participantId,
-      },
+      input: { id: participantId },
     }),
   )
 
@@ -38,14 +38,6 @@ export function PageSession({
       refetchInterval: REFETCH_ACCESSES_INTERVAL_MS,
     }),
   )
-
-  const revealHint = (hintId: string) => {
-    setRevealedHints(new Set([...revealedHints, hintId]))
-  }
-
-  const revealSolution = (solutionId: string) => {
-    setRevealedSolutions(new Set([...revealedSolutions, solutionId]))
-  }
 
   const ui = getUiState((set) => {
     if (participantQuery.isLoading || workshopContentQuery.isLoading)
@@ -65,7 +57,6 @@ export function PageSession({
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
       <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           {ui
@@ -91,7 +82,6 @@ export function PageSession({
         </div>
       </header>
 
-      {/* Main Content */}
       <main>
         {ui
           .match('pending', () => (
@@ -129,85 +119,105 @@ export function PageSession({
                         )}
                         {substep.content && <p>{substep.content}</p>}
 
-                        {/* Hints */}
-                        {substep.hints.length > 0 && (
-                          <aside className="not-prose">
-                            <h4 className="text-base font-semibold mb-3">
-                              💡 Hints
-                            </h4>
+                        <div className="space-y-6 w-full max-w-3xl">
+                          {substep.hints.length > 0 && (
                             <div className="space-y-2">
-                              {substep.hints.map((hint, hintIndex) => (
-                                <div key={hint.id}>
-                                  {revealedHints.has(hint.id) ? (
-                                    <details
-                                      open
-                                      className="bg-yellow-50 border border-yellow-200 p-4 rounded"
-                                    >
-                                      <summary className="font-medium text-yellow-900 cursor-pointer list-none">
-                                        Hint {hintIndex + 1}
-                                      </summary>
-                                      <p className="mt-2 text-sm text-yellow-900">
-                                        {hint.content}
-                                      </p>
-                                    </details>
-                                  ) : (
-                                    <button
-                                      onClick={() => revealHint(hint.id)}
-                                      className="w-full text-left px-4 py-3 bg-yellow-100 hover:bg-yellow-200 border border-yellow-300 rounded text-sm font-medium transition-colors"
-                                    >
-                                      🔒 Click to reveal Hint {hintIndex + 1}
-                                    </button>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </aside>
-                        )}
+                              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                Need a nudge?
+                              </h4>
+                              <Accordion
+                                type="single"
+                                collapsible
+                                className="w-full not-prose space-y-2"
+                              >
+                                {substep.hints.map((hint, hintIndex) => (
+                                  <AccordionItem
+                                    value={hint.id}
+                                    key={hint.id}
+                                    className="border border-amber-200 bg-amber-50/50 rounded-md overflow-hidden"
+                                  >
+                                    <AccordionTrigger className="px-4 py-3 hover:bg-amber-100/50 hover:no-underline group">
+                                      <div className="flex items-center gap-3 text-amber-900">
+                                        {/* Icon swaps based on open state */}
+                                        <Lightbulb className="w-4 h-4 text-amber-600 group-data-[state=open]:fill-amber-600 transition-colors" />
 
-                        {/* Solutions */}
-                        {substep.solutions.length > 0 && (
-                          <aside className="not-prose my-6">
-                            <h4 className="text-base font-semibold mb-3">
-                              ✅ Solution
-                            </h4>
-                            <div className="space-y-2">
-                              {substep.solutions.map((solution) => (
-                                <div key={solution.id}>
-                                  {revealedSolutions.has(solution.id) ? (
-                                    <details
-                                      open
-                                      className="bg-green-50 border border-green-200 p-4 rounded"
-                                    >
-                                      <summary className="font-medium text-green-900 cursor-pointer list-none">
-                                        Solution
-                                      </summary>
-                                      <code className="mt-3 p-3 bg-white rounded text-sm overflow-x-auto">
-                                        {solution.content}
-                                      </code>
-                                      {solution.explanation && (
-                                        <div className="mt-3 text-sm text-green-900">
-                                          <strong>Explanation:</strong>
-                                          <p className="mt-1">
-                                            {solution.explanation}
-                                          </p>
-                                        </div>
-                                      )}
-                                    </details>
-                                  ) : (
-                                    <button
-                                      onClick={() =>
-                                        revealSolution(solution.id)
-                                      }
-                                      className="w-full text-left px-4 py-3 bg-green-100 hover:bg-green-200 border border-green-300 rounded font-semibold transition-colors"
-                                    >
-                                      🔒 Click to reveal Solution
-                                    </button>
-                                  )}
-                                </div>
-                              ))}
+                                        <span className="font-medium group-data-[state=open]:hidden">
+                                          Reveal Hint {hintIndex + 1}
+                                        </span>
+                                        <span className="font-medium hidden group-data-[state=open]:inline-block">
+                                          Hint {hintIndex + 1}
+                                        </span>
+                                      </div>
+                                    </AccordionTrigger>
+
+                                    <AccordionContent className="px-4 pb-4 pt-1">
+                                      <div className="pl-7 text-amber-900/90 leading-relaxed text-sm">
+                                        {hint.content}
+                                      </div>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                ))}
+                              </Accordion>
                             </div>
-                          </aside>
-                        )}
+                          )}
+
+                          {/* --- SOLUTIONS SECTION --- */}
+                          {substep.solutions.length > 0 && (
+                            <div className="space-y-2">
+                              <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                                Answer Key
+                              </h4>
+                              <Accordion
+                                type="single"
+                                collapsible
+                                className="w-full not-prose space-y-3"
+                              >
+                                {substep.solutions.map((solution) => (
+                                  <AccordionItem
+                                    value={solution.id}
+                                    key={solution.id}
+                                    className="border border-slate-200 rounded-lg bg-white overflow-hidden"
+                                  >
+                                    <AccordionTrigger className="px-4 py-3 bg-slate-50 hover:bg-slate-100 hover:no-underline group border-b border-transparent data-[state=open]:border-slate-200 transition-all">
+                                      <div className="flex items-center gap-3 text-slate-700">
+                                        {/* Icon swaps based on open state */}
+                                        <Lock className="w-4 h-4 text-slate-400 group-data-[state=open]:hidden" />
+                                        <Unlock className="w-4 h-4 text-indigo-500 hidden group-data-[state=open]:block" />
+
+                                        <span className="font-medium group-data-[state=open]:hidden">
+                                          View Solution
+                                        </span>
+                                        <span className="font-medium hidden group-data-[state=open]:inline-block text-indigo-700">
+                                          Solution Revealed
+                                        </span>
+                                      </div>
+                                    </AccordionTrigger>
+
+                                    <AccordionContent className="bg-white">
+                                      <div className="flex flex-col">
+                                        <CodeWithCopy code={solution.content} />
+
+                                        {solution.explanation && (
+                                          <div className="p-4 bg-indigo-50/30 flex gap-3 text-sm text-slate-700">
+                                            <CheckCircle2 className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+                                            <div className="space-y-1">
+                                              <strong className="font-semibold text-indigo-900 block">
+                                                Why this works
+                                              </strong>
+                                              <p className="leading-relaxed text-slate-600">
+                                                {solution.explanation}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                ))}
+                              </Accordion>
+                            </div>
+                          )}
+                        </div>
                       </section>
                     ))}
                   </section>

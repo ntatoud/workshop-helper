@@ -10,6 +10,6 @@ pre-commit:
       glob: '*.{js,ts,jsx,tsx}'
 
     - name: Format staged code
-      run: bun prettier {staged_files}
+      run: bun prettier --write {staged_files}
       glob: '*.{js,ts,jsx,tsx}'
       stage_fixed: true
