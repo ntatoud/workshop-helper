@@ -296,7 +296,7 @@ const router = os
             eq(steps.workshopId, input.workshopId),
             inArray(steps.id, accessibleStepIds),
           ),
-          orderBy: (steps, { asc }) => [asc(steps.order)],
+          orderBy: (s, { asc }) => [asc(s.order)],
           with: {
             substeps: {
               orderBy: (substeps, { asc }) => [asc(substeps.order)],
