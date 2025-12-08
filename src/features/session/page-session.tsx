@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { getUiState } from '@bearstudio/ui-state'
-import { CheckCircle2, Lightbulb, Lock, Unlock } from 'lucide-react'
+import { CheckCircle2, Download, Lightbulb, Lock, Unlock } from 'lucide-react'
 import { orpc } from '@/orpc/client'
 import { Skeleton } from '@/components/ui/skeleton'
 import { SessionEmptyAccess } from '@/features/session/session-empty-access'
@@ -13,6 +13,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { CodeWithCopy } from '@/components/code-with-copy'
+import { Button } from '@/components/ui/button'
 
 const REFETCH_ACCESSES_INTERVAL_SECONDS = 5
 const REFETCH_ACCESSES_INTERVAL_MS = REFETCH_ACCESSES_INTERVAL_SECONDS * 1000
@@ -56,7 +57,7 @@ export function PageSession({
   })
 
   return (
-    <div className="min-h-screen">
+    <div className="flex flex-1 flex-col">
       <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           {ui
@@ -82,22 +83,29 @@ export function PageSession({
         </div>
       </header>
 
-      <main>
-        {ui
-          .match('pending', () => (
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="text-xl">Loading...</div>
-            </div>
-          ))
-          .match('error', () => (
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="text-xl">Error...</div>
-            </div>
-          ))
-          .match('empty', () => <SessionEmptyAccess />)
-          .match('default', ({ workshopContent }) => (
-            <article className="container mx-auto px-4 py-8 max-w-5xl prose">
-              {workshopContent.steps.map((step, index) => (
+      <main className="flex flex-1 h-full">
+        <aside className="flex flex-col w-40 items-center justify-center">
+          <Button asChild>
+            <a href="/sprites/dungeon.png" download="dungeon.png">
+              Textures <Download />
+            </a>
+          </Button>
+        </aside>
+        <article className="container mx-auto px-4 py-8 max-w-5xl prose">
+          {ui
+            .match('pending', () => (
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-xl">Loading...</div>
+              </div>
+            ))
+            .match('error', () => (
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="text-xl">Error...</div>
+              </div>
+            ))
+            .match('empty', () => <SessionEmptyAccess />)
+            .match('default', ({ workshopContent }) =>
+              workshopContent.steps.map((step, index) => (
                 <Fragment key={step.id}>
                   {index !== 0 && <Separator />}
                   <section>
@@ -222,10 +230,10 @@ export function PageSession({
                     ))}
                   </section>
                 </Fragment>
-              ))}
-            </article>
-          ))
-          .exhaustive()}
+              )),
+            )
+            .exhaustive()}
+        </article>
       </main>
     </div>
   )

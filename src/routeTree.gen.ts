@@ -17,7 +17,7 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as ApiIndexSplatRouteImport } from './routes/api/index.$'
 import { Route as ManagerWorkshopsIndexRouteImport } from './routes/manager/workshops/index'
 import { Route as ManagerSessionsIndexRouteImport } from './routes/manager/sessions/index'
-import { Route as AppSessionIdParticipantIdRouteImport } from './routes/app/$sessionId.$participantId'
+import { Route as AppParticipantIdIndexRouteImport } from './routes/app/$participantId/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ManagerWorkshopsWorkshopIdIndexRouteImport } from './routes/manager/workshops/$workshopId/index'
@@ -65,12 +65,11 @@ const ManagerSessionsIndexRoute = ManagerSessionsIndexRouteImport.update({
   path: '/sessions/',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
-const AppSessionIdParticipantIdRoute =
-  AppSessionIdParticipantIdRouteImport.update({
-    id: '/app/$sessionId/$participantId',
-    path: '/app/$sessionId/$participantId',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const AppParticipantIdIndexRoute = AppParticipantIdIndexRouteImport.update({
+  id: '/app/$participantId/',
+  path: '/app/$participantId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
@@ -114,7 +113,7 @@ export interface FileRoutesByFullPath {
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
-  '/app/$sessionId/$participantId': typeof AppSessionIdParticipantIdRoute
+  '/app/$participantId': typeof AppParticipantIdIndexRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
   '/manager/workshops': typeof ManagerWorkshopsIndexRoute
   '/api/index/$': typeof ApiIndexSplatRoute
@@ -130,7 +129,7 @@ export interface FileRoutesByTo {
   '/manager': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
-  '/app/$sessionId/$participantId': typeof AppSessionIdParticipantIdRoute
+  '/app/$participantId': typeof AppParticipantIdIndexRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
   '/manager/workshops': typeof ManagerWorkshopsIndexRoute
   '/api/index/$': typeof ApiIndexSplatRoute
@@ -148,7 +147,7 @@ export interface FileRoutesById {
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
-  '/app/$sessionId/$participantId': typeof AppSessionIdParticipantIdRoute
+  '/app/$participantId/': typeof AppParticipantIdIndexRoute
   '/manager/sessions/': typeof ManagerSessionsIndexRoute
   '/manager/workshops/': typeof ManagerWorkshopsIndexRoute
   '/api/index/$': typeof ApiIndexSplatRoute
@@ -167,7 +166,7 @@ export interface FileRouteTypes {
     | '/manager/'
     | '/api/auth/$'
     | '/api/rpc/$'
-    | '/app/$sessionId/$participantId'
+    | '/app/$participantId'
     | '/manager/sessions'
     | '/manager/workshops'
     | '/api/index/$'
@@ -183,7 +182,7 @@ export interface FileRouteTypes {
     | '/manager'
     | '/api/auth/$'
     | '/api/rpc/$'
-    | '/app/$sessionId/$participantId'
+    | '/app/$participantId'
     | '/manager/sessions'
     | '/manager/workshops'
     | '/api/index/$'
@@ -200,7 +199,7 @@ export interface FileRouteTypes {
     | '/manager/'
     | '/api/auth/$'
     | '/api/rpc/$'
-    | '/app/$sessionId/$participantId'
+    | '/app/$participantId/'
     | '/manager/sessions/'
     | '/manager/workshops/'
     | '/api/index/$'
@@ -217,7 +216,7 @@ export interface RootRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
-  AppSessionIdParticipantIdRoute: typeof AppSessionIdParticipantIdRoute
+  AppParticipantIdIndexRoute: typeof AppParticipantIdIndexRoute
   ApiIndexSplatRoute: typeof ApiIndexSplatRoute
 }
 
@@ -279,11 +278,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerSessionsIndexRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
-    '/app/$sessionId/$participantId': {
-      id: '/app/$sessionId/$participantId'
-      path: '/app/$sessionId/$participantId'
-      fullPath: '/app/$sessionId/$participantId'
-      preLoaderRoute: typeof AppSessionIdParticipantIdRouteImport
+    '/app/$participantId/': {
+      id: '/app/$participantId/'
+      path: '/app/$participantId'
+      fullPath: '/app/$participantId'
+      preLoaderRoute: typeof AppParticipantIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/rpc/$': {
@@ -364,7 +363,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
-  AppSessionIdParticipantIdRoute: AppSessionIdParticipantIdRoute,
+  AppParticipantIdIndexRoute: AppParticipantIdIndexRoute,
   ApiIndexSplatRoute: ApiIndexSplatRoute,
 }
 export const routeTree = rootRouteImport

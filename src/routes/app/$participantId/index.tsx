@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PageSession } from '@/features/session/page-session'
 
-export const Route = createFileRoute('/app/$sessionId/$participantId')({
+export const Route = createFileRoute('/app/$participantId/')({
   component: RouteComponent,
 })
 

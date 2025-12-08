@@ -38,9 +38,8 @@ export function PageJoinSession() {
         })
 
         navigate({
-          to: '/app/$sessionId/$participantId',
+          to: '/app/$participantId',
           params: {
-            sessionId: session.id.toString(),
             participantId: participant.id.toString(),
           },
         })
