@@ -19,6 +19,7 @@ import { Route as ManagerWorkshopsIndexRouteImport } from './routes/manager/work
 import { Route as ManagerSessionsIndexRouteImport } from './routes/manager/sessions/index'
 import { Route as AppParticipantIdIndexRouteImport } from './routes/app/$participantId/index'
 import { Route as ManagerWorkshopsNewRouteImport } from './routes/manager/workshops/new'
+import { Route as ManagerSessionsNewRouteImport } from './routes/manager/sessions/new'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ManagerWorkshopsWorkshopIdRouteRouteImport } from './routes/manager/workshops/$workshopId/route'
@@ -77,6 +78,11 @@ const ManagerWorkshopsNewRoute = ManagerWorkshopsNewRouteImport.update({
   path: '/workshops/new',
   getParentRoute: () => ManagerRouteRoute,
 } as any)
+const ManagerSessionsNewRoute = ManagerSessionsNewRouteImport.update({
+  id: '/sessions/new',
+  path: '/sessions/new',
+  getParentRoute: () => ManagerRouteRoute,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/manager/workshops/$workshopId': typeof ManagerWorkshopsWorkshopIdRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/manager/sessions/new': typeof ManagerSessionsNewRoute
   '/manager/workshops/new': typeof ManagerWorkshopsNewRoute
   '/app/$participantId': typeof AppParticipantIdIndexRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/manager/workshops/$workshopId': typeof ManagerWorkshopsWorkshopIdRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/manager/sessions/new': typeof ManagerSessionsNewRoute
   '/manager/workshops/new': typeof ManagerWorkshopsNewRoute
   '/app/$participantId': typeof AppParticipantIdIndexRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/manager/workshops/$workshopId': typeof ManagerWorkshopsWorkshopIdRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/manager/sessions/new': typeof ManagerSessionsNewRoute
   '/manager/workshops/new': typeof ManagerWorkshopsNewRoute
   '/app/$participantId/': typeof AppParticipantIdIndexRoute
   '/manager/sessions/': typeof ManagerSessionsIndexRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/manager/workshops/$workshopId'
     | '/api/auth/$'
     | '/api/rpc/$'
+    | '/manager/sessions/new'
     | '/manager/workshops/new'
     | '/app/$participantId'
     | '/manager/sessions'
@@ -204,6 +214,7 @@ export interface FileRouteTypes {
     | '/manager/workshops/$workshopId'
     | '/api/auth/$'
     | '/api/rpc/$'
+    | '/manager/sessions/new'
     | '/manager/workshops/new'
     | '/app/$participantId'
     | '/manager/sessions'
@@ -223,6 +234,7 @@ export interface FileRouteTypes {
     | '/manager/workshops/$workshopId'
     | '/api/auth/$'
     | '/api/rpc/$'
+    | '/manager/sessions/new'
     | '/manager/workshops/new'
     | '/app/$participantId/'
     | '/manager/sessions/'
@@ -317,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerWorkshopsNewRouteImport
       parentRoute: typeof ManagerRouteRoute
     }
+    '/manager/sessions/new': {
+      id: '/manager/sessions/new'
+      path: '/sessions/new'
+      fullPath: '/manager/sessions/new'
+      preLoaderRoute: typeof ManagerSessionsNewRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
     '/api/rpc/$': {
       id: '/api/rpc/$'
       path: '/api/rpc/$'
@@ -393,6 +412,7 @@ const ManagerWorkshopsWorkshopIdRouteRouteWithChildren =
 interface ManagerRouteRouteChildren {
   ManagerIndexRoute: typeof ManagerIndexRoute
   ManagerWorkshopsWorkshopIdRouteRoute: typeof ManagerWorkshopsWorkshopIdRouteRouteWithChildren
+  ManagerSessionsNewRoute: typeof ManagerSessionsNewRoute
   ManagerWorkshopsNewRoute: typeof ManagerWorkshopsNewRoute
   ManagerSessionsIndexRoute: typeof ManagerSessionsIndexRoute
   ManagerWorkshopsIndexRoute: typeof ManagerWorkshopsIndexRoute
@@ -403,6 +423,7 @@ const ManagerRouteRouteChildren: ManagerRouteRouteChildren = {
   ManagerIndexRoute: ManagerIndexRoute,
   ManagerWorkshopsWorkshopIdRouteRoute:
     ManagerWorkshopsWorkshopIdRouteRouteWithChildren,
+  ManagerSessionsNewRoute: ManagerSessionsNewRoute,
   ManagerWorkshopsNewRoute: ManagerWorkshopsNewRoute,
   ManagerSessionsIndexRoute: ManagerSessionsIndexRoute,
   ManagerWorkshopsIndexRoute: ManagerWorkshopsIndexRoute,

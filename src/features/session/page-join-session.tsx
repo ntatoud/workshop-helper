@@ -71,6 +71,7 @@ export function PageJoinSession() {
                   })}
                   children={({ values }) => (
                     <Button
+                      type="submit"
                       size="lg"
                       disabled={
                         !values.code ||
