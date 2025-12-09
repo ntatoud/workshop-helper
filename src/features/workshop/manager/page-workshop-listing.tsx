@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
+import { PlusIcon } from 'lucide-react'
 import { orpc } from '@/orpc/client'
 import {
   PageLayout,
@@ -8,7 +9,7 @@ import {
   PageLayoutTitle,
   PageLayoutTopbar,
 } from '@/layouts/manager/page-layout'
-import { Button } from '@/components/ui/button'
+import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button'
 
 export function PageWorkshopListing() {
   const [showCreateDialog, setShowCreateDialog] = useState(false)
@@ -37,9 +38,12 @@ export function PageWorkshopListing() {
     <PageLayout>
       <PageLayoutTopbar
         endActions={
-          <Button onClick={() => setShowCreateDialog(true)}>
-            New Workshop
-          </Button>
+          <ResponsiveIconButton
+            onClick={() => setShowCreateDialog(true)}
+            label="New Workshop"
+          >
+            <PlusIcon />
+          </ResponsiveIconButton>
         }
       >
         <PageLayoutTitle>Workshops</PageLayoutTitle>

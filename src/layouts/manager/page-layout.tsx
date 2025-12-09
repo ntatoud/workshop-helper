@@ -45,7 +45,7 @@ export function PageLayoutTopbar({
         </>
       )}
       <div
-        className={cn('flex flex-1 items-center', {
+        className={cn('flex flex-1 items-center overflow-hidden', {
           'ml-1': !showSidebarTrigger || startActions,
         })}
       >
@@ -63,7 +63,16 @@ export function PageLayoutTitle({
   children?: React.ReactNode
   className?: string
 }) {
-  return <h1 className={cn('text-xl font-bold', className)}>{children}</h1>
+  return (
+    <h1
+      className={cn(
+        'min-w-0 truncate text-lg font-medium md:text-xl',
+        className,
+      )}
+    >
+      {children}
+    </h1>
+  )
 }
 
 export function PageLayoutContent({

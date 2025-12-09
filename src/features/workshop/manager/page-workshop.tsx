@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, PlusIcon, TrashIcon } from 'lucide-react'
 import { orpc } from '@/orpc/client'
 import {
   PageLayout,
@@ -10,6 +10,7 @@ import {
   PageLayoutTopbar,
 } from '@/layouts/manager/page-layout'
 import { Button } from '@/components/ui/button'
+import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button'
 
 export function PageWorkshop({ params }: { params: { workshopId: string } }) {
   const navigate = useNavigate()
@@ -85,10 +86,19 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
         }
         endActions={
           <>
-            <Button onClick={() => setShowStepDialog(true)}>New Step</Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete Workshop
-            </Button>
+            <ResponsiveIconButton
+              onClick={() => setShowStepDialog(true)}
+              label="New Step"
+            >
+              <PlusIcon />
+            </ResponsiveIconButton>
+            <ResponsiveIconButton
+              variant="destructive"
+              onClick={handleDelete}
+              label="Delete Workshop"
+            >
+              <TrashIcon />
+            </ResponsiveIconButton>
           </>
         }
       >
