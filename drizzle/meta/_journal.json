@@ -8,6 +8,13 @@
       "when": 1765133937223,
       "tag": "0000_huge_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1765296293637,
+      "tag": "0001_same_cerise",
+      "breakpoints": true
     }
   ]
 }

@@ -11,7 +11,7 @@ export function WorkshopEditor() {
   return (
     <Plate editor={editor}>
       <EditorContainer>
-        <Editor />
+        <Editor placeholder="Your awesome content..." />
       </EditorContainer>
     </Plate>
   )

@@ -20,11 +20,8 @@ export type StepCreateFormFields = z.input<
 >
 export const zStepCreateFormFields = () =>
   zStep().pick({
-    workshopId: true,
     title: true,
     description: true,
-    content: true,
-    order: true,
   })
 
 export type StepUpdateFormFields = z.input<

@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
-import { ArrowLeft, PlusIcon, TrashIcon } from 'lucide-react'
+import { Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft, FlagTriangleRight, Trash2Icon } from 'lucide-react'
+import { getUiState } from '@bearstudio/ui-state'
 import { orpc } from '@/orpc/client'
 import {
   PageLayout,
@@ -11,30 +11,33 @@ import {
 } from '@/layouts/manager/page-layout'
 import { Button } from '@/components/ui/button'
 import { ResponsiveIconButton } from '@/components/ui/responsive-icon-button'
+import { Spinner } from '@/components/ui/spinner'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Item, ItemActions, ItemContent, ItemTitle } from '@/components/ui/item'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
+import { Separator } from '@/components/ui/separator'
+import { useGoToFirstStep } from '@/features/workshop/manager/use-go-to-first-step'
 
 export function PageWorkshop({ params }: { params: { workshopId: string } }) {
   const navigate = useNavigate()
-  const [showStepDialog, setShowStepDialog] = useState(false)
-  const [stepTitle, setStepTitle] = useState('')
-  const [stepDescription, setStepDescription] = useState('')
-  const [stepContent, setStepContent] = useState('')
 
-  const { data: workshop, refetch } = useQuery(
+  const workshopQuery = useQuery(
     orpc.workshops.get.queryOptions({
       input: {
         id: params.workshopId,
       },
-    }),
-  )
-
-  const createStep = useMutation(
-    orpc.steps.create.mutationOptions({
-      onSuccess: () => {
-        refetch()
-        setShowStepDialog(false)
-        setStepTitle('')
-        setStepDescription('')
-        setStepContent('')
+      select: (workshop) => {
+        return {
+          ...workshop,
+          firstStep: workshop.steps?.[0],
+        }
       },
     }),
   )
@@ -47,27 +50,36 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
     }),
   )
 
-  const handleCreateStep = () => {
-    if (!workshop) return
-    const nextOrder = (workshop.steps?.length || 0) + 1
-    createStep.mutate({
-      workshopId: workshop.id,
-      title: stepTitle,
-      description: stepDescription,
-      content: stepContent,
-      order: nextOrder,
-    })
-  }
+  const deleteStep = useMutation(
+    orpc.steps.delete.mutationOptions({
+      onSuccess: async (_data, _variables, _result, context) => {
+        await context.client.invalidateQueries({
+          queryKey: orpc.workshops.get.queryKey({
+            input: { id: params.workshopId },
+          }),
+        })
 
-  const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this workshop?')) {
-      deleteWorkshop.mutate({ id: params.workshopId })
-    }
-  }
+        await navigate({
+          to: '/manager/workshops/$workshopId',
+          params: { workshopId: params.workshopId },
+        })
+      },
+    }),
+  )
 
-  if (!workshop) {
-    return <div className="container mx-auto p-8">Loading...</div>
-  }
+  useGoToFirstStep(params.workshopId, workshopQuery.data?.firstStep)
+
+  const ui = getUiState((set) => {
+    if (workshopQuery.isLoading) return set('pending')
+    if (!workshopQuery.isSuccess) return set('error')
+
+    return set('default', { workshop: workshopQuery.data })
+  })
+
+  const stepsUi = getUiState((set) => {
+    if (!workshopQuery.data?.steps?.length) return set('empty')
+    return set('default', { steps: workshopQuery.data.steps })
+  })
 
   return (
     <PageLayout>
@@ -85,134 +97,155 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
           </Button>
         }
         endActions={
-          <>
-            <ResponsiveIconButton
-              onClick={() => setShowStepDialog(true)}
-              label="New Step"
-            >
-              <PlusIcon />
-            </ResponsiveIconButton>
-            <ResponsiveIconButton
-              variant="destructive"
-              onClick={handleDelete}
-              label="Delete Workshop"
-            >
-              <TrashIcon />
-            </ResponsiveIconButton>
-          </>
+          <ResponsiveIconButton
+            variant="ghost"
+            onClick={() => {
+              if (confirm('Are you sure you want to delete this workshop?')) {
+                deleteWorkshop.mutate({ id: params.workshopId })
+              }
+            }}
+            label="Delete"
+            title="Delete this workshop"
+          >
+            <Trash2Icon />
+          </ResponsiveIconButton>
         }
       >
-        <PageLayoutTitle>Workshop : {workshop.title}</PageLayoutTitle>
+        <PageLayoutTitle>
+          {ui
+            .match('pending', () => <Skeleton className="h-6 w-20" />)
+            .match('error', () => <>Error...</>)
+            .match('default', ({ workshop }) => <>Workshop: {workshop.title}</>)
+            .exhaustive()}
+        </PageLayoutTitle>
       </PageLayoutTopbar>
       <PageLayoutContent>
-        {workshop.description && (
-          <div className="prose max-w-none p-4 pt-2">
-            {workshop.description}
-          </div>
-        )}
-
-        {showStepDialog && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h2 className="text-2xl font-bold mb-4">Create Step</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    value={stepTitle}
-                    onChange={(e) => setStepTitle(e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
-                    placeholder="Step title"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    value={stepDescription}
-                    onChange={(e) => setStepDescription(e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
-                    placeholder="Step description"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">
-                    Content
-                  </label>
-                  <textarea
-                    value={stepContent}
-                    onChange={(e) => setStepContent(e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
-                    placeholder="Step content"
-                    rows={8}
-                  />
-                </div>
-                <div className="flex gap-2 justify-end">
-                  <button
-                    onClick={() => setShowStepDialog(false)}
-                    className="px-4 py-2 border rounded hover:bg-gray-100"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleCreateStep}
-                    disabled={!stepTitle || createStep.isPending}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {createStep.isPending ? 'Creating...' : 'Create Step'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="space-y-6">
-          {workshop.steps?.map((step, index) => (
-            <div key={step.id} className="border rounded-lg p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-2xl font-semibold">
-                    Step {index + 1}: {step.title}
-                  </h3>
-                  {step.description && (
-                    <p className="text-gray-600 mt-1">{step.description}</p>
-                  )}
-                </div>
-                <Link
-                  to="/manager/workshops/$workshopId/steps/$stepId"
-                  params={{
-                    workshopId: workshop.id.toString(),
-                    stepId: step.id.toString(),
-                  }}
-                  className="px-3 py-1 text-sm bg-gray-100 rounded hover:bg-gray-200"
-                >
-                  Edit
-                </Link>
-              </div>
-              {step.content && (
-                <div className="prose max-w-none bg-gray-50 p-4 rounded">
-                  {step.content}
+        {ui
+          .match('pending', () => <Spinner full className="size-12" />)
+          .match('error', () => <>Error...</>)
+          .match('default', ({ workshop }) => (
+            <div className="flex flex-col flex-1 gap-4">
+              {workshop.description && (
+                <div className="prose max-w-none px-4">
+                  {workshop.description}
                 </div>
               )}
-              <div className="mt-4 text-sm text-gray-500">
-                {step.substeps?.length || 0} substeps
-              </div>
-            </div>
-          ))}
-        </div>
+              {stepsUi
+                .match('empty', () => (
+                  <WorkshopEmptyState workshopId={workshop.id} />
+                ))
+                .match('default', () => (
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex w-full max-w-xs flex-col gap-2">
+                      {workshop.steps?.map((step, index) => (
+                        <Link
+                          to="/manager/workshops/$workshopId/steps/$stepId"
+                          params={{ workshopId: workshop.id, stepId: step.id }}
+                          aria-label={`See ${step.title}`}
+                        >
+                          {({ isActive }) => {
+                            return (
+                              <Item
+                                variant={isActive ? 'muted' : 'default'}
+                                key={step.id}
+                                size="sm"
+                              >
+                                <ItemContent>
+                                  <ItemTitle>
+                                    {index + 1}. {step.title}
+                                  </ItemTitle>
+                                </ItemContent>
+                                <ItemActions>
+                                  <Button
+                                    variant="ghost"
+                                    title="Delete step"
+                                    className="invisible group-hover:visible"
+                                    onClick={() => {
+                                      if (
+                                        confirm(
+                                          'Are you sure you want to delete this step?',
+                                        )
+                                      ) {
+                                        deleteStep.mutate({ id: step.id })
+                                      }
+                                    }}
+                                  >
+                                    <Trash2Icon />
+                                  </Button>
+                                </ItemActions>
+                              </Item>
+                            )
+                          }}
+                        </Link>
+                      ))}
+                      <Item
+                        variant="outline"
+                        size="sm"
+                        className="border-dashed"
+                        asChild
+                      >
+                        <Link
+                          to="/manager/workshops/$workshopId/steps/new"
+                          params={{ workshopId: workshop.id }}
+                        >
+                          <ItemContent>
+                            <ItemTitle>Add an other step</ItemTitle>
+                          </ItemContent>
+                          <ItemActions>
+                            <Button variant="outline">Create</Button>
+                          </ItemActions>
+                        </Link>
+                      </Item>
+                    </div>
 
-        {!workshop.steps?.length && (
-          <div className="text-center py-12 text-gray-500">
-            No steps yet. Add your first step to get started!
-          </div>
-        )}
+                    <Separator
+                      orientation="vertical"
+                      className="bg-gray-400 min-w-2"
+                    />
+
+                    <div className="w-full h-full">
+                      <Outlet />
+                    </div>
+                  </div>
+                ))
+                .exhaustive()}
+            </div>
+          ))
+          .exhaustive()}
       </PageLayoutContent>
     </PageLayout>
+  )
+}
+
+function WorkshopEmptyState({ workshopId }: { workshopId: string }) {
+  const location = useLocation()
+
+  if (location.href.endsWith('new')) {
+    return <Outlet />
+  }
+
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <FlagTriangleRight />
+        </EmptyMedia>
+        <EmptyTitle>No Steps Yet</EmptyTitle>
+        <EmptyDescription>
+          You haven&apos;t created any steps yet. Get started by creating your
+          first step.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button asChild>
+          <Link
+            to="/manager/workshops/$workshopId/steps/new"
+            params={{ workshopId }}
+          >
+            Create your first step
+          </Link>
+        </Button>
+      </EmptyContent>
+    </Empty>
   )
 }

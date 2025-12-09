@@ -11,7 +11,11 @@ import {
 
 const router = {
   create: os
-    .input(zStepCreateFormFields())
+    .input(
+      zStepCreateFormFields().extend({
+        workshopId: zStep().shape.workshopId,
+      }),
+    )
     .output(zStep())
     .handler(async ({ input }) => {
       const [step] = await db
@@ -20,8 +24,6 @@ const router = {
           workshopId: input.workshopId,
           title: input.title,
           description: input.description,
-          content: input.content,
-          order: input.order,
         })
         .returning()
 

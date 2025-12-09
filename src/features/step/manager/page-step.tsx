@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
 import { orpc } from '@/orpc/client'
 import { WorkshopEditor } from '@/components/workshop-editor'
 import { WorkshopViewer } from '@/components/workshop-viewer'
@@ -14,6 +13,9 @@ import {
 } from '@/layouts/manager/page-layout'
 import { Button } from '@/components/ui/button'
 
+/**
+ * Contained inside of the PageWorkshop layout
+ */
 export function PageStep({
   params,
 }: {
@@ -23,7 +25,6 @@ export function PageStep({
   }
 }) {
   const { workshopId, stepId } = params
-  const navigate = useNavigate()
   const [showSubstepDialog, setShowSubstepDialog] = useState(false)
   const [substepTitle, setSubstepTitle] = useState('')
   const [substepDescription, setSubstepDescription] = useState('')
@@ -49,17 +50,6 @@ export function PageStep({
     }),
   )
 
-  const deleteStep = useMutation(
-    orpc.steps.delete.mutationOptions({
-      onSuccess: () => {
-        navigate({
-          to: '/manager/workshops/$workshopId',
-          params: { workshopId },
-        })
-      },
-    }),
-  )
-
   const step = workshop?.steps?.find((s) => s.id === stepId)
 
   const handleCreateSubstep = () => {
@@ -74,44 +64,20 @@ export function PageStep({
     })
   }
 
-  const handleDeleteStep = () => {
-    if (confirm('Are you sure you want to delete this step?')) {
-      deleteStep.mutate({ id: stepId })
-    }
-  }
-
   if (!workshop || !step) {
     return <div className="container mx-auto p-8">Loading...</div>
   }
 
   return (
-    <PageLayout>
-      <PageLayoutTopbar
-        startActions={
-          <Button
-            asChild
-            variant="ghost"
-            title="Retour au workshop"
-            size="icon"
-          >
-            <Link to="/manager/workshops/$workshopId" params={{ workshopId }}>
-              <ArrowLeft />
-            </Link>
-          </Button>
-        }
-        endActions={
-          <>
-            <Button onClick={() => setShowSubstepDialog(true)}>
-              Add Substep
-            </Button>
-            <Button onClick={handleDeleteStep} variant="destructive">
-              Delete Step
-            </Button>
-          </>
-        }
-      >
-        <PageLayoutTitle>Etape : {step.title}</PageLayoutTitle>
-      </PageLayoutTopbar>
+    <PageLayout className="px-8">
+      <div className="flex flex-row w-full">
+        <h2 className="text-lg md:text-xl items-center">
+          Étape : {step.title}
+        </h2>
+        <Button onClick={() => setShowSubstepDialog(true)} className="ml-auto">
+          Add Substep
+        </Button>
+      </div>
       <PageLayoutContent>
         {step.description && (
           <div className="prose max-w-none p-4 pt-2">{step.description}</div>

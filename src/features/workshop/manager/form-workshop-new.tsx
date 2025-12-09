@@ -4,7 +4,10 @@ import { zWorkshopCreateFormFields } from '@/features/workshop/schema'
 import { withForm } from '@/lib/form'
 
 export const workshopNewFormOptions = formOptions({
-  defaultValues: {} as WorkshopCreateFormFields,
+  defaultValues: {
+    title: '',
+    description: '',
+  } as WorkshopCreateFormFields,
   validators: {
     onSubmit: zWorkshopCreateFormFields(),
   },

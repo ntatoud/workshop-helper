@@ -28,7 +28,7 @@ export const steps = pgTable('steps', {
   title: text('title').notNull(),
   description: text('description'),
   content: text('content'), // Main content of the step
-  order: integer('order').notNull(), // To maintain step ordering
+  order: integer('order').notNull().generatedByDefaultAsIdentity(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -42,7 +42,7 @@ export const substeps = pgTable('substeps', {
   title: text('title').notNull(),
   description: text('description'),
   content: text('content'),
-  order: integer('order').notNull(), // To maintain substep ordering
+  order: integer('order').notNull().generatedByDefaultAsIdentity(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -54,7 +54,7 @@ export const hints = pgTable('hints', {
     .notNull()
     .references(() => substeps.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
-  order: integer('order').notNull(), // To maintain hint ordering
+  order: integer('order').notNull().generatedByDefaultAsIdentity(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 

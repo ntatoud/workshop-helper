@@ -45,7 +45,7 @@ export function PageLayoutTopbar({
         </>
       )}
       <div
-        className={cn('flex flex-1 items-center overflow-hidden', {
+        className={cn('flex items-center overflow-hidden', {
           'ml-1': !showSidebarTrigger || startActions,
         })}
       >
