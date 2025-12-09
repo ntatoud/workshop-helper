@@ -20,6 +20,7 @@ import {
 } from '@/features/session/form-join-session'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { ManagerOnly } from '@/features/auth/manager-only'
+import { Form } from '@/components/form'
 
 export function PageJoinSession() {
   const navigate = useNavigate()
@@ -53,13 +54,7 @@ export function PageJoinSession() {
   })
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        void form.handleSubmit()
-      }}
-    >
+    <Form form={form}>
       <div className="min-h-screen flex flex-col items-center gap-8 justify-center bg-linear-to-br from-blue-50 to-indigo-100">
         <Card>
           <CardHeader className="text-center">
@@ -118,6 +113,6 @@ export function PageJoinSession() {
           </Link>
         </ManagerOnly>
       </div>
-    </form>
+    </Form>
   )
 }

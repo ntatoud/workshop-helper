@@ -18,6 +18,7 @@ import { Route as ApiIndexSplatRouteImport } from './routes/api/index.$'
 import { Route as ManagerWorkshopsIndexRouteImport } from './routes/manager/workshops/index'
 import { Route as ManagerSessionsIndexRouteImport } from './routes/manager/sessions/index'
 import { Route as AppParticipantIdIndexRouteImport } from './routes/app/$participantId/index'
+import { Route as ManagerWorkshopsNewRouteImport } from './routes/manager/workshops/new'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ManagerWorkshopsWorkshopIdIndexRouteImport } from './routes/manager/workshops/$workshopId/index'
@@ -70,6 +71,11 @@ const AppParticipantIdIndexRoute = AppParticipantIdIndexRouteImport.update({
   path: '/app/$participantId/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManagerWorkshopsNewRoute = ManagerWorkshopsNewRouteImport.update({
+  id: '/workshops/new',
+  path: '/workshops/new',
+  getParentRoute: () => ManagerRouteRoute,
+} as any)
 const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   id: '/api/rpc/$',
   path: '/api/rpc/$',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/manager/workshops/new': typeof ManagerWorkshopsNewRoute
   '/app/$participantId': typeof AppParticipantIdIndexRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
   '/manager/workshops': typeof ManagerWorkshopsIndexRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/manager': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/manager/workshops/new': typeof ManagerWorkshopsNewRoute
   '/app/$participantId': typeof AppParticipantIdIndexRoute
   '/manager/sessions': typeof ManagerSessionsIndexRoute
   '/manager/workshops': typeof ManagerWorkshopsIndexRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/manager/': typeof ManagerIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
+  '/manager/workshops/new': typeof ManagerWorkshopsNewRoute
   '/app/$participantId/': typeof AppParticipantIdIndexRoute
   '/manager/sessions/': typeof ManagerSessionsIndexRoute
   '/manager/workshops/': typeof ManagerWorkshopsIndexRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/manager/'
     | '/api/auth/$'
     | '/api/rpc/$'
+    | '/manager/workshops/new'
     | '/app/$participantId'
     | '/manager/sessions'
     | '/manager/workshops'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/manager'
     | '/api/auth/$'
     | '/api/rpc/$'
+    | '/manager/workshops/new'
     | '/app/$participantId'
     | '/manager/sessions'
     | '/manager/workshops'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/manager/'
     | '/api/auth/$'
     | '/api/rpc/$'
+    | '/manager/workshops/new'
     | '/app/$participantId/'
     | '/manager/sessions/'
     | '/manager/workshops/'
@@ -285,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppParticipantIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manager/workshops/new': {
+      id: '/manager/workshops/new'
+      path: '/workshops/new'
+      fullPath: '/manager/workshops/new'
+      preLoaderRoute: typeof ManagerWorkshopsNewRouteImport
+      parentRoute: typeof ManagerRouteRoute
+    }
     '/api/rpc/$': {
       id: '/api/rpc/$'
       path: '/api/rpc/$'
@@ -332,6 +351,7 @@ declare module '@tanstack/react-router' {
 
 interface ManagerRouteRouteChildren {
   ManagerIndexRoute: typeof ManagerIndexRoute
+  ManagerWorkshopsNewRoute: typeof ManagerWorkshopsNewRoute
   ManagerSessionsIndexRoute: typeof ManagerSessionsIndexRoute
   ManagerWorkshopsIndexRoute: typeof ManagerWorkshopsIndexRoute
   ManagerSessionsSessionIdIndexRoute: typeof ManagerSessionsSessionIdIndexRoute
@@ -342,6 +362,7 @@ interface ManagerRouteRouteChildren {
 
 const ManagerRouteRouteChildren: ManagerRouteRouteChildren = {
   ManagerIndexRoute: ManagerIndexRoute,
+  ManagerWorkshopsNewRoute: ManagerWorkshopsNewRoute,
   ManagerSessionsIndexRoute: ManagerSessionsIndexRoute,
   ManagerWorkshopsIndexRoute: ManagerWorkshopsIndexRoute,
   ManagerSessionsSessionIdIndexRoute: ManagerSessionsSessionIdIndexRoute,
