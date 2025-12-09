@@ -22,7 +22,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
-import { Separator } from '@/components/ui/separator'
 import { useGoToFirstStep } from '@/features/workshop/manager/use-go-to-first-step'
 
 export function PageWorkshop({ params }: { params: { workshopId: string } }) {
@@ -149,6 +148,7 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
                                 variant={isActive ? 'muted' : 'default'}
                                 key={step.id}
                                 size="sm"
+                                className="group"
                               >
                                 <ItemContent>
                                   <ItemTitle>
@@ -160,7 +160,9 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
                                     variant="ghost"
                                     title="Delete step"
                                     className="invisible group-hover:visible"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      e.preventDefault()
                                       if (
                                         confirm(
                                           'Are you sure you want to delete this step?',
@@ -197,11 +199,6 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
                         </Link>
                       </Item>
                     </div>
-
-                    <Separator
-                      orientation="vertical"
-                      className="bg-gray-400 min-w-2"
-                    />
 
                     <div className="w-full h-full">
                       <Outlet />
