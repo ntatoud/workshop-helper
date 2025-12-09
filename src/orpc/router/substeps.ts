@@ -21,7 +21,7 @@ const router = {
           title: input.title,
           description: input.description,
           content: input.content,
-          order: input.order,
+          confirmed: input.confirmed,
         })
         .returning()
 
@@ -39,6 +39,7 @@ const router = {
           description: input.description,
           content: input.content,
           order: input.order,
+          confirmed: input.confirmed,
           updatedAt: new Date(),
         })
         .where(eq(substeps.id, input.id))

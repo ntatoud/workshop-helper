@@ -15,6 +15,20 @@
       "when": 1765296293637,
       "tag": "0001_same_cerise",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765313445335,
+      "tag": "0002_first_wilson_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1765313872494,
+      "tag": "0003_nervous_viper",
+      "breakpoints": true
     }
   ]
 }

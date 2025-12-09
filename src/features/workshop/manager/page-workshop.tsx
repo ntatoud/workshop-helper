@@ -120,7 +120,7 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
       </PageLayoutTopbar>
       <PageLayoutContent>
         {ui
-          .match('pending', () => <Spinner full className="size-12" />)
+          .match('pending', () => <Spinner full />)
           .match('error', () => <>Error...</>)
           .match('default', ({ workshop }) => (
             <div className="flex flex-col flex-1 gap-4">
@@ -135,7 +135,7 @@ export function PageWorkshop({ params }: { params: { workshopId: string } }) {
                 ))
                 .match('default', () => (
                   <div className="flex flex-col md:flex-row gap-4">
-                    <div className="flex w-full max-w-xs flex-col gap-2">
+                    <div className="flex w-full max-w-2xs flex-col gap-2">
                       {workshop.steps?.map((step, index) => (
                         <Link
                           to="/manager/workshops/$workshopId/steps/$stepId"

@@ -42,6 +42,7 @@ export const substeps = pgTable('substeps', {
   title: text('title').notNull(),
   description: text('description'),
   content: text('content'),
+  confirmed: boolean('confirmed').notNull().default(false),
   order: integer('order').notNull().generatedByDefaultAsIdentity(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

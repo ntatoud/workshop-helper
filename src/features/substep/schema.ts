@@ -12,10 +12,26 @@ export const zSubstep = () =>
     content: z.string().nullish(),
     order: z.number(),
     hints: z.array(zHint()).optional(),
+    confirmed: z.boolean(),
     solutions: z.array(zSolution()).optional(),
     createdAt: z.date(),
     updatedAt: z.date(),
   })
+
+export type SubstepFormFields = z.input<ReturnType<typeof zSubstepFormFields>>
+export const zSubstepFormFields = () =>
+  zSubstep()
+    .pick({
+      title: true,
+      description: true,
+      content: true,
+      confirmed: true,
+      hints: true,
+      solutions: true,
+    })
+    .extend({
+      id: zSubstep().shape.id.nullish(),
+    })
 
 export type SubstepCreateFormFields = z.input<
   ReturnType<typeof zSubstepCreateFormFields>
@@ -25,8 +41,8 @@ export const zSubstepCreateFormFields = () =>
     stepId: true,
     title: true,
     description: true,
+    confirmed: true,
     content: true,
-    order: true,
   })
 
 export type SubstepUpdateFormFields = z.input<
@@ -38,6 +54,7 @@ export const zSubstepUpdateFormFields = () =>
       id: true,
       title: true,
       description: true,
+      confirmed: true,
     })
     .extend({
       content: zSubstep().shape.content.optional(),

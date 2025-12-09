@@ -4,6 +4,7 @@ import { FieldText } from '@/components/form/field-text'
 import { FormFieldLabel } from '@/components/form/form-field-label'
 import { FormField } from '@/components/form/form-field'
 import { FieldTextarea } from '@/components/form/field-textarea'
+import { FormPreventNavigation } from '@/components/form/form-prevent-navigation'
 
 export const { useAppForm, withForm } = createFormHook({
   fieldComponents: {
@@ -12,7 +13,9 @@ export const { useAppForm, withForm } = createFormHook({
     Label: FormFieldLabel,
     Container: FormField,
   },
-  formComponents: {},
+  formComponents: {
+    PreventNavigation: FormPreventNavigation,
+  },
   fieldContext,
   formContext,
 })
